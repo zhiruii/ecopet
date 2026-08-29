@@ -23,4 +23,12 @@
   --warn: #96642c; /* muted amber — caution / streak (no swatch warm hue) */
   --bad: #b23449; /* deepened dusty pink — not recyclable */
   --credit: #eac4d5; /* dusty pink — coins (paired with ink text) */
+  
+  /* New UI tokens from Homescreen.tsx */
+  --sky: #87CEEB;
+  --ground: #6BBF6B;
+  --accent-blue: #5EC7EE;
+  --accent-hover: #4CAF50;
+  --text-main: var(--ink);
+  --text-muted: #6B7C93;
 }

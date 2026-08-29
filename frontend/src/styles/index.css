@@ -27,3 +27,45 @@ body {
   margin: 0 auto;
   min-height: 100dvh;
 }
+
+@layer utilities {
+  .soft-shadow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  .animate-float-slow {
+    animation: float-slow 30s linear infinite;
+  }
+  .animate-float-medium {
+    animation: float-medium 20s linear infinite;
+  }
+}
+
+@keyframes float-slow {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-40px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes float-medium {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-60px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes bird-drift {
+  0% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(-30px) translateY(-5px); }
+  50% { transform: translateX(-60px) translateY(2px); }
+  75% { transform: translateX(-30px) translateY(-3px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes popup-scale-in {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes backdrop-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
