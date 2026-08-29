@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { AccessoryId, PetMood, PetSpeciesId } from 'shared/types'
+import { ACCESSORY_SLOT } from '../data/shopItems'
 import { persistConfig } from './persist'
 
 interface PetState {
@@ -38,8 +39,13 @@ export const usePetStore = create<PetState>()(
         })),
       own: (id) =>
         set((state) => (state.owned.includes(id) ? state : { owned: [...state.owned, id] })),
+      // One item per slot: wearing a second head piece takes the first one off.
       wear: (id) =>
-        set((state) => (state.worn.includes(id) ? state : { worn: [...state.worn, id] })),
+        set((state) => {
+          if (state.worn.includes(id)) return state
+          const slot = ACCESSORY_SLOT[id]
+          return { worn: [...state.worn.filter((w) => ACCESSORY_SLOT[w] !== slot), id] }
+        }),
       unwear: (id) => set((state) => ({ worn: state.worn.filter((w) => w !== id) })),
     }),
     persistConfig('pet'),

@@ -8,10 +8,14 @@ export interface FoodItem {
   restores: number
 }
 
+/** Where an accessory sits on the pet. One worn item per slot. */
+export type AccessorySlot = 'head' | 'face' | 'body'
+
 export interface AccessoryItem {
   id: AccessoryId
   name: string
   price: number
+  slot: AccessorySlot
 }
 
 export const FOODS: FoodItem[] = [
@@ -21,8 +25,18 @@ export const FOODS: FoodItem[] = [
 ]
 
 export const ACCESSORIES: AccessoryItem[] = [
-  { id: 'hat', name: 'Little Hat', price: 40 },
-  { id: 'scarf', name: 'Cozy Scarf', price: 40 },
-  { id: 'glasses', name: 'Round Glasses', price: 60 },
-  { id: 'leafCrown', name: 'Leaf Crown', price: 80 },
+  { id: 'hat', name: 'Little Hat', price: 40, slot: 'head' },
+  { id: 'scarf', name: 'Cozy Scarf', price: 40, slot: 'body' },
+  { id: 'glasses', name: 'Round Glasses', price: 60, slot: 'face' },
+  { id: 'leafCrown', name: 'Leaf Crown', price: 80, slot: 'head' },
 ]
+
+export const ACCESSORY_SLOT = Object.fromEntries(
+  ACCESSORIES.map((a) => [a.id, a.slot]),
+) as Record<AccessoryId, AccessorySlot>
+
+export const SLOT_LABEL: Record<AccessorySlot, string> = {
+  head: 'Head',
+  face: 'Face',
+  body: 'Body',
+}

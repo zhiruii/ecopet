@@ -30,5 +30,5 @@
   --accent-blue: #5EC7EE;
   --accent-hover: #4CAF50;
   --text-main: var(--ink);
-  --text-muted: #6B7C93;
+  --text-muted: #5a6a85; /* darkened from #6b7c93 — small muted labels were 3.98:1 on --paper */
 }

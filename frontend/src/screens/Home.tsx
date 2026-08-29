@@ -16,7 +16,7 @@ interface HomeProps {
 }
 
 export function Home({ onNavigate }: HomeProps) {
-  const { species, name, hunger } = usePetStore()
+  const { species, name, hunger, worn } = usePetStore()
   const { credits, scans, baseline } = useProgressStore()
   const { reaction, triggerReaction } = usePetReaction()
   const [showRecyclePopup, setShowRecyclePopup] = useState(false)
@@ -129,7 +129,7 @@ export function Home({ onNavigate }: HomeProps) {
             </div>
           ) : null}
 
-          <Pet species={species} mood={displayMood} reaction={reaction} />
+          <Pet species={species} mood={displayMood} reaction={reaction} accessories={worn} />
 
           {/* Ground contact shadow */}
           <div className="w-28 h-2 mt-1" style={{ background: 'rgba(58,122,62,0.35)' }} />
