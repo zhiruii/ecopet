@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 
 export function usePetWalk(isPaused: boolean = false, isCelebrating: boolean = false) {
   const [x, setX] = useState(50)
@@ -9,7 +9,10 @@ export function usePetWalk(isPaused: boolean = false, isCelebrating: boolean = f
   
   const isPausedRef = useRef(isPaused)
   const isCelebratingRef = useRef(isCelebrating)
-  useEffect(() => {
+  // useLayoutEffect fires synchronously after DOM mutations, before paint.
+  // This ensures the animation loop (requestAnimationFrame) sees the updated
+  // isCelebrating flag on the very next frame, not after a paint delay.
+  useLayoutEffect(() => {
     isPausedRef.current = isPaused
     isCelebratingRef.current = isCelebrating
   }, [isPaused, isCelebrating])
@@ -39,6 +42,8 @@ export function usePetWalk(isPaused: boolean = false, isCelebrating: boolean = f
       }
 
       if (s.state === 'idle') {
+        // If celebration just started, force the timer to expire immediately
+        if (isCelebratingRef.current) s.timer = 0
         s.timer -= dt
         if (s.timer <= 0) {
           if (isCelebratingRef.current || Math.random() < 0.4) {

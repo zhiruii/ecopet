@@ -23,17 +23,20 @@ export default function App() {
   const species = usePetStore((s) => s.species)
   const addHappiness = usePetStore((s) => s.addHappiness)
   
-  useEffect(() => {
-    const interval = setInterval(() => {
-      addHappiness(-1)
-    }, 10000)
-    return () => clearInterval(interval)
-  }, [addHappiness])
+
 
   const [screen, setScreen] = useState<Screen>(() => initialScreen(species !== null))
   // Which food the player picked in the Shop to go feed the pet with. Navigation
   // intent rather than saved state, so it lives here and not in the store.
   const [armedFood, setArmedFood] = useState<FoodId | null>(null)
+
+  useEffect(() => {
+    if (species === null || screen !== 'home') return
+    const interval = setInterval(() => {
+      addHappiness(-1)
+    }, 10000)
+    return () => clearInterval(interval)
+  }, [addHappiness, species, screen])
 
   const showTabBar = (TAB_SCREENS as string[]).includes(screen)
 

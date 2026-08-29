@@ -1,5 +1,4 @@
 import { PixelSprite } from '../components/PixelSprite';
-import { IconRecycle } from '../components/icons';
 
 const SUN_GRID = ['..XXXX..', '.XXXXXX.', 'XXXXXXXX', 'XXXXXXXX', 'XXXXXXXX', 'XXXXXXXX', '.XXXXXX.', '..XXXX..'];
 const SUN_PALETTE = { X: '#FFD25A' };

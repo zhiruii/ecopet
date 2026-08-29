@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
 import type { FoodId } from 'shared/types'
-import { IconRecycle, IconCoins, IconScan, IconClose } from '../components/icons'
+import { IconRecycle, IconCoins, IconClose } from '../components/icons'
 import type { Screen } from '../App'
 import { usePetStore } from '../store/usePetStore'
 import { useProgressStore } from '../store/useProgressStore'
@@ -12,7 +12,6 @@ import { usePetReaction } from '../pet/animations/usePetReaction'
 import { usePetWalk } from '../pet/animations/usePetWalk'
 import { Button } from '../components/Button'
 import { ProgressBar } from '../components/ProgressBar'
-import { ListItem } from '../components/ListItem'
 import { PixelSun, PixelCloud, PixelBird, PixelTree, PixelBush, PixelBin, PixelPlane } from './homeScenery'
 
 /** The food is eaten in three bites, so the icon vanishes a third at a time. */
@@ -113,7 +112,7 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
     setTimeout(() => setBushCooldown(false), 10000) // 10 seconds
     
     // Trigger berry drop animation
-    const berryId = Date.now()
+    const berryId = Date.now() + Math.random()
     setBerries((prev) => [...prev, berryId])
     setTimeout(() => {
       setBerries((prev) => prev.filter((id) => id !== berryId))

@@ -43,6 +43,10 @@ export async function identify(imageBlob: Blob): Promise<IdentifyResult[]> {
     return data.items;
   } catch (error) {
     console.warn('Real identify API failed, falling back to mock:', error);
+    // In production, we don't want to silently fake results if the API is down.
+    if (import.meta.env.PROD) {
+      throw error;
+    }
     // Graceful fallback to mock (e.g. local dev without vercel dev running)
     return mockIdentify();
   }

@@ -81,7 +81,7 @@ export function Onboarding({ onDone }: OnboardingProps) {
             maxLength={12}
             onChange={(e) => setName(e.target.value)}
           />
-          <Button disabled={!name} onClick={() => setStep('baseline')}>
+          <Button disabled={!name.trim()} onClick={() => setStep('baseline')}>
             Next
           </Button>
         </Card>

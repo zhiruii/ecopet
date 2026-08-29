@@ -1,9 +1,7 @@
-import { IconRecycle, IconTrendingUp, IconCheckCircle, IconLeaf } from '../components/icons'
+import { IconRecycle, IconLeaf } from '../components/icons'
 import { useProgressStore } from '../store/useProgressStore'
 import {
   itemsThisWeek,
-  baselineDelta,
-  correctSortingRate,
   cumulativeCo2,
 } from '../features/impact/metrics'
 import { equivalenceFor } from '../features/impact/equivalence'
@@ -19,8 +17,6 @@ export function Stats({ onBack }: StatsProps) {
   const baseline = useProgressStore((s) => s.baseline)
 
   const thisWeek = itemsThisWeek(scans)
-  const delta = baseline ? baselineDelta(scans, baseline) : null
-  const rate = correctSortingRate(scans)
   const co2 = cumulativeCo2(scans)
   const equiv = equivalenceFor(co2)
 

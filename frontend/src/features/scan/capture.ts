@@ -3,6 +3,9 @@ const JPEG_QUALITY = 0.8
 
 /** Downscales to ~768px on the long edge and JPEG-compresses before upload. */
 export async function captureAndCompress(file: File): Promise<Blob> {
+  if (!file.type.startsWith('image/')) {
+    throw new Error('Please select an image file.')
+  }
   const bitmap = await createImageBitmap(file)
   const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height))
   const width = Math.round(bitmap.width * scale)

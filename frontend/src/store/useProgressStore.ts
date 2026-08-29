@@ -75,10 +75,16 @@ export const useProgressStore = create<ProgressState>()(
           co2SavedKg,
           creditsAwarded: breakdown.total,
         }
-        set((state) => ({
-          scans: [...state.scans, record],
-          credits: state.credits + breakdown.total,
-        }))
+        set((state) => {
+          const newScans = [...state.scans, record]
+          if (newScans.length > 500) {
+            newScans.splice(0, newScans.length - 500)
+          }
+          return {
+            scans: newScans,
+            credits: state.credits + breakdown.total,
+          }
+        })
         return { record, breakdown }
       },
       spend: (amount) => {

@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { clsx } from 'clsx'
 import { IconAlert, IconPackageCheck, IconScan } from '../components/icons'
 import type { IdentifyResult } from 'shared/types'
-import { mockIdentify } from '../features/scan/mockIdentify'
 import { captureAndCompress } from '../features/scan/capture'
 import { identify } from '../features/scan/identify'
 import { useRef } from 'react'
@@ -45,20 +44,8 @@ export function ScanFlow({ onDone }: ScanFlowProps) {
     }
   }
 
-  async function runMock(force?: 'lowConfidence' | 'error') {
-    setState('identifying')
-    try {
-      const rs = await mockIdentify({ force })
-      setResults(rs)
-      setConfirmations(rs.map(() => ({ rinseConfirmed: false, binConfirmed: false })))
-      setState('result')
-    } catch {
-      setState('error')
-    }
-  }
-
   function confirmAndAward() {
-    if (results.length === 0) return
+    if (results.length === 0 || results.length !== confirmations.length) return
     let totalHappiness = 0
     const scanAwards = results.map((result, i) => {
       const conf = confirmations[i] || { rinseConfirmed: false, binConfirmed: false }
