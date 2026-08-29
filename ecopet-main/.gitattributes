@@ -1,0 +1,7 @@
+# Shell scripts and git hooks must keep LF endings, or they fail with
+# "bad interpreter" when a teammate clones on macOS or Linux.
+*.sh text eol=lf
+.githooks/* text eol=lf
+
+# Normalise everything else
+* text=auto

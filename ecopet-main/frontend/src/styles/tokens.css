@@ -1,0 +1,34 @@
+/*
+ * Base surface (--ink, --paper, --card) is CLAUDE.md's original spec — the
+ * user asked to keep the neutral background/text and reserve the palette for
+ * accents only. Palette source: user-supplied swatch (dusty periwinkle
+ * #809bce, dusty blue #95b8d1, mint #b8e0d2, pale sage #d6eadf, dusty pink
+ * #eac4d5) — used for buttons, tags/chips and icon accents (--accent, --info,
+ * --good, --credit), either as-is or paired with dark ink text for contrast.
+ * --accent is a deepened, more saturated shade of the swatch's periwinkle
+ * blue — solid buttons need ~4.5:1 contrast for white label text, which the
+ * raw pastel can't hit. --bad is likewise a deepened, red-shifted tone of the
+ * swatch's dusty pink, so the one truly safety-critical state ("not
+ * recyclable") still reads as an unmistakable alert rather than a soft
+ * pastel. --warn has no pastel counterpart in the swatch (no warm hue
+ * supplied), so it stays a muted, swatch-adjacent amber.
+ */
+:root {
+  --ink: #14396e; /* every outline, every heading */
+  --paper: #fbf9f3; /* app background, warm off-white */
+  --card: #ffffff;
+  --accent: #4c63a8; /* deepened periwinkle — primary action */
+  --info: #95b8d1; /* dusty blue — progress fill, secondary emphasis */
+  --good: #b8e0d2; /* mint — recyclable / success (paired with ink text) */
+  --warn: #96642c; /* muted amber — caution / streak (no swatch warm hue) */
+  --bad: #b23449; /* deepened dusty pink — not recyclable */
+  --credit: #eac4d5; /* dusty pink — coins (paired with ink text) */
+  
+  /* New UI tokens from Homescreen.tsx */
+  --sky: #87CEEB;
+  --ground: #6BBF6B;
+  --accent-blue: #5EC7EE;
+  --accent-hover: #4CAF50;
+  --text-main: var(--ink);
+  --text-muted: #5a6a85; /* darkened from #6b7c93 — small muted labels were 3.98:1 on --paper */
+}

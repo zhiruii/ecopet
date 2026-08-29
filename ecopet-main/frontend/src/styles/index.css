@@ -1,0 +1,103 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Silkscreen', monospace;
+  letter-spacing: 0.02em;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+/* Silkscreen only ships weights 400/700 — collapse Tailwind's heavier utility
+   classes onto 700 so the browser never synthesizes a fake bold (which blurs
+   the pixel grid). Unlayered so it beats Tailwind's own utility layer. */
+.font-semibold,
+.font-extrabold,
+.font-black {
+  font-weight: 700;
+}
+
+#root {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+}
+
+@layer utilities {
+  .soft-shadow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  /* Stepped pixel-corner notch — the signature panel shape (Card, Button, ListItem, Sheet). */
+  .pixel-notch {
+    clip-path: polygon(
+      8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px),
+      calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px
+    );
+  }
+  .pixel-notch-top {
+    clip-path: polygon(
+      8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px
+    );
+  }
+  .pixel-notch-sm {
+    clip-path: polygon(
+      4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px),
+      calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px
+    );
+  }
+  .animate-float-slow {
+    animation: float-slow 30s linear infinite;
+  }
+  .animate-float-medium {
+    animation: float-medium 20s linear infinite;
+  }
+}
+
+@keyframes float-slow {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-40px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes float-medium {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-60px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes bird-drift {
+  0% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(-30px) translateY(-5px); }
+  50% { transform: translateX(-60px) translateY(2px); }
+  75% { transform: translateX(-30px) translateY(-3px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes popup-scale-in {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes backdrop-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
