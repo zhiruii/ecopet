@@ -173,7 +173,7 @@ function FoodRow({ food, icon, credits, held, onBuy, onFeed }: FoodRowProps) {
             affordable ? clsx(TILE_BUTTON_LIVE, 'bg-accent text-white') : TILE_BUTTON_DEAD,
           )}
         >
-          Buy {food.price}c
+          Buy {food.price}
         </button>
         <button
           type="button"
@@ -219,7 +219,7 @@ function AccessoryTile({
     ? { label: 'Unequip', onClick: onUnwear, disabled: false }
     : owned
       ? { label: 'Equip', onClick: onWear, disabled: false }
-      : { label: `Buy ${item.price}c`, onClick: onBuy, disabled: !affordable }
+      : { label: `Buy ${item.price}`, onClick: onBuy, disabled: !affordable }
 
   const caption =
     owned || affordable ? `${SLOT_LABEL[item.slot]} slot` : `${shortfall} more credits`

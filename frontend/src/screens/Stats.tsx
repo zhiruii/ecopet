@@ -39,22 +39,6 @@ export function Stats({ onBack }: StatsProps) {
           trailing={<span className="text-lg font-black">{thisWeek}</span>}
         />
         <ListItem
-          icon={<IconTrendingUp size={20} />}
-          title="Change vs. baseline"
-          subtitle="Primary metric — target +50%"
-          trailing={
-            <span className="text-lg font-black">
-              {delta === null ? '—' : `${delta >= 0 ? '+' : ''}${Math.round(delta * 100)}%`}
-            </span>
-          }
-        />
-        <ListItem
-          icon={<IconCheckCircle size={20} />}
-          title="Correct-sorting rate"
-          subtitle="Rinsed + right bin, both confirmed"
-          trailing={<span className="text-lg font-black">{Math.round(rate * 100)}%</span>}
-        />
-        <ListItem
           icon={<IconLeaf size={20} />}
           title="CO2 saved"
           subtitle={equiv.phrase}
@@ -62,7 +46,7 @@ export function Stats({ onBack }: StatsProps) {
         />
       </div>
 
-      <p className="text-xs opacity-60">Source: docs/sources.md — EPA WARM factors</p>
+
     </div>
   )
 }

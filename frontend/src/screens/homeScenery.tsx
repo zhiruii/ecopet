@@ -181,23 +181,28 @@ export function PixelPlane({ className }: { className?: string }) {
         >
           <div className="absolute inset-0 bg-[#A0A0A0] border-2 border-ink" style={{ animation: 'propeller-spin 0.1s steps(2, end) infinite' }} />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-ink z-10" />
+
         </div>
       </div>
     </div>
   );
 }
 
-/** Flat-color pixel recycling bin — replaces the gradient/shadow version. */
 export function PixelBin({ onClick }: { onClick: () => void }) {
   return (
     <div
-      className="absolute bottom-[38%] left-[4%] w-14 h-20 pointer-events-auto cursor-pointer transition-transform duration-150 hover:-translate-y-1 active:translate-y-0"
+      className="absolute bottom-[calc(38%+20px)] left-[4%] w-[60px] pointer-events-auto cursor-pointer transition-transform duration-150 hover:-translate-y-1 active:translate-y-0"
       onClick={onClick}
     >
-      <div className="absolute top-0 -left-0.5 w-[110%] h-4 border-[3px] border-ink bg-[#7BCAEE]" />
-      <div className="absolute bottom-0 w-full h-16 border-[3px] border-ink bg-[#4C9FCB] flex items-center justify-center overflow-hidden">
-        <img src="/recycling-icon.png" alt="Recycle" className="w-10 h-10 mb-1 object-contain pixelated" style={{ imageRendering: 'pixelated' }} />
-      </div>
+      <img 
+        src="/recyclingbin.png" 
+        alt="Recycle Bin"
+        className="w-full h-auto drop-shadow-md"
+        style={{ 
+          imageRendering: 'pixelated',
+          filter: 'hue-rotate(115deg) saturate(1.2)' 
+        }}
+      />
     </div>
   );
 }

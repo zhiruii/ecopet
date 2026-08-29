@@ -210,7 +210,7 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
           <PixelTree className="absolute bottom-[48%] left-[-2%]" tone="#3A7A3E" />
           <PixelTree className="absolute bottom-[44%] right-[2%] scale-75" tone="#4A8F4E" />
 
-          <PixelBin onClick={() => setShowRecyclePopup(true)} />
+          <PixelBin onClick={() => window.open('https://www.recycle.gov.sg/', '_blank', 'noopener,noreferrer')} />
 
           <PixelBush className="absolute bottom-[40%] right-[8%]" />
 
