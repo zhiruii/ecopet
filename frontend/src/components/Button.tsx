@@ -27,7 +27,7 @@ export function Button({
   return (
     <button
       className={clsx(
-        'inline-flex items-center justify-center gap-2 rounded-2xl border-[3px] border-ink px-5 py-3 font-extrabold tracking-wide shadow-[4px_4px_0_var(--ink)] transition-all duration-150 active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_var(--ink)] disabled:pointer-events-none disabled:opacity-50',
+        'pixel-notch inline-flex items-center justify-center gap-2 border-[3px] border-ink px-5 py-3 font-bold tracking-wide shadow-[4px_4px_0_var(--ink)] transition-all duration-150 active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_var(--ink)] disabled:pointer-events-none disabled:opacity-50',
         VARIANT_CLASSES[variant],
         className,
       )}

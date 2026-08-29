@@ -1,5 +1,5 @@
 import { clsx } from 'clsx'
-import { Home as HomeIcon, ScanLine, ShoppingBag, BarChart3 } from 'lucide-react'
+import { IconHome, IconScan, IconShop, IconStats } from './icons'
 import type { Screen } from '../App'
 
 interface TabBarProps {
@@ -7,11 +7,11 @@ interface TabBarProps {
   onNavigate: (screen: Screen) => void
 }
 
-const TABS: { id: Screen; label: string; Icon: typeof HomeIcon }[] = [
-  { id: 'home', label: 'Home', Icon: HomeIcon },
-  { id: 'scan', label: 'Scan', Icon: ScanLine },
-  { id: 'shop', label: 'Shop', Icon: ShoppingBag },
-  { id: 'stats', label: 'Stats', Icon: BarChart3 },
+const TABS: { id: Screen; label: string; Icon: typeof IconHome }[] = [
+  { id: 'home', label: 'Home', Icon: IconHome },
+  { id: 'scan', label: 'Scan', Icon: IconScan },
+  { id: 'shop', label: 'Shop', Icon: IconShop },
+  { id: 'stats', label: 'Stats', Icon: IconStats },
 ]
 
 export function TabBar({ active, onNavigate }: TabBarProps) {

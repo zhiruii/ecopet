@@ -1,5 +1,5 @@
 import { clsx } from 'clsx'
-import { Check } from 'lucide-react'
+import { IconCheck } from './icons'
 
 interface CheckToggleProps {
   checked: boolean
@@ -22,7 +22,7 @@ export function CheckToggle({ checked, onToggle, label }: CheckToggleProps) {
           : 'border-ink/25 bg-transparent hover:border-ink/50 hover:bg-info/20',
       )}
     >
-      {checked && <Check size={20} strokeWidth={3} className="text-ink" />}
+      {checked && <IconCheck size={20} className="text-ink" />}
     </button>
   )
 }

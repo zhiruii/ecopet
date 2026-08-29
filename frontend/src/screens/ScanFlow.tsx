@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CircleAlert, PackageCheck, ScanLine } from 'lucide-react'
+import { IconAlert, IconPackageCheck, IconScan } from '../components/icons'
 import type { IdentifyResult } from 'shared/types'
 import { mockIdentify } from '../features/scan/mockIdentify'
 import { useProgressStore } from '../store/useProgressStore'
@@ -49,8 +49,8 @@ export function ScanFlow({ onDone }: ScanFlowProps) {
       {state === 'idle' && (
         <>
           <Card className="flex flex-col items-center gap-3 py-10 text-center">
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-info/20 text-ink">
-              <ScanLine size={28} strokeWidth={2.5} />
+            <span className="flex h-16 w-16 items-center justify-center border-[3px] border-ink bg-info/20 text-ink">
+              <IconScan size={28} />
             </span>
             <p className="font-bold">Real capture opens the camera here</p>
             <p className="text-sm opacity-70">
@@ -75,14 +75,14 @@ export function ScanFlow({ onDone }: ScanFlowProps) {
 
       {state === 'identifying' && (
         <Card className="flex flex-col items-center gap-3 py-10 text-center">
-          <ScanLine size={28} strokeWidth={2.5} className="animate-pulse" />
+          <IconScan size={28} className="animate-pulse" />
           <p className="font-bold">Identifying…</p>
         </Card>
       )}
 
       {state === 'error' && (
         <Card className="flex flex-col items-center gap-3 py-10 text-center">
-          <CircleAlert size={28} strokeWidth={2.5} className="text-bad" />
+          <IconAlert size={28} className="text-bad" />
           <p className="font-bold">Couldn&apos;t identify that</p>
           <p className="text-sm opacity-70">
             Manual material picker goes here (B builds it).
@@ -120,8 +120,8 @@ export function ScanFlow({ onDone }: ScanFlowProps) {
 
       {state === 'reward' && (
         <Card className="flex flex-col items-center gap-3 py-10 text-center">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-credit">
-            <PackageCheck size={28} strokeWidth={2.5} />
+          <span className="flex h-16 w-16 items-center justify-center border-[3px] border-ink bg-credit">
+            <IconPackageCheck size={28} />
           </span>
           <p className="font-bold">Nice! Credits awarded.</p>
           <Button onClick={onDone}>Back to home</Button>

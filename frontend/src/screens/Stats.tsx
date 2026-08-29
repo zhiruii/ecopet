@@ -1,4 +1,4 @@
-import { Recycle, TrendingUp, CheckCircle2, Leaf } from 'lucide-react'
+import { IconRecycle, IconTrendingUp, IconCheckCircle, IconLeaf } from '../components/icons'
 import { useProgressStore } from '../store/useProgressStore'
 import {
   itemsThisWeek,
@@ -33,13 +33,13 @@ export function Stats({ onBack }: StatsProps) {
 
       <div className="flex flex-col gap-2">
         <ListItem
-          icon={<Recycle size={20} strokeWidth={2.5} />}
+          icon={<IconRecycle size={20} />}
           title="Items this week"
           subtitle={`Baseline: ${baseline ?? '—'} / week`}
           trailing={<span className="text-lg font-black">{thisWeek}</span>}
         />
         <ListItem
-          icon={<TrendingUp size={20} strokeWidth={2.5} />}
+          icon={<IconTrendingUp size={20} />}
           title="Change vs. baseline"
           subtitle="Primary metric — target +50%"
           trailing={
@@ -49,13 +49,13 @@ export function Stats({ onBack }: StatsProps) {
           }
         />
         <ListItem
-          icon={<CheckCircle2 size={20} strokeWidth={2.5} />}
+          icon={<IconCheckCircle size={20} />}
           title="Correct-sorting rate"
           subtitle="Rinsed + right bin, both confirmed"
           trailing={<span className="text-lg font-black">{Math.round(rate * 100)}%</span>}
         />
         <ListItem
-          icon={<Leaf size={20} strokeWidth={2.5} />}
+          icon={<IconLeaf size={20} />}
           title="CO2 saved"
           subtitle={equiv.phrase}
           trailing={<span className="text-lg font-black">{co2} kg</span>}

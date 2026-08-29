@@ -20,7 +20,7 @@ export function Sheet({ open, onClose, children }: SheetProps) {
             onClick={onClose}
           />
           <motion.div
-            className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-[430px] rounded-t-3xl border-[3px] border-b-0 border-ink bg-card p-5"
+            className="pixel-notch-top fixed inset-x-0 bottom-0 z-50 mx-auto max-w-[430px] border-[3px] border-b-0 border-ink bg-card p-5"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}

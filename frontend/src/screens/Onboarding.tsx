@@ -6,7 +6,7 @@ import { BackButton } from '../components/BackButton'
 import { Button } from '../components/Button'
 import { Card } from '../components/Card'
 
-const SPECIES_IDS: PetSpeciesId[] = ['sprout', 'bloop', 'pebble', 'nimbus', 'fern', 'coco']
+const SPECIES_IDS: PetSpeciesId[] = ['chargetchi', 'hugtchi', 'punchtchi']
 
 interface OnboardingProps {
   onDone: () => void
@@ -54,12 +54,13 @@ export function Onboarding({ onDone }: OnboardingProps) {
       {step === 'species' && (
         <Card className="flex flex-col gap-4">
           <p className="font-bold">Pick a pet (placeholder grid — pet/PetPicker.tsx replaces this)</p>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="flex flex-col gap-2">
             {SPECIES_IDS.map((id) => (
               <Button
                 key={id}
                 variant={species === id ? 'primary' : 'secondary'}
                 onClick={() => setSpecies(id)}
+                className="text-sm"
               >
                 {id}
               </Button>

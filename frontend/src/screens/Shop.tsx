@@ -1,4 +1,4 @@
-import { Apple, Shirt, Coins } from 'lucide-react'
+import { IconApple, IconShirt, IconCoins } from '../components/icons'
 import { FOODS, ACCESSORIES } from '../data/shopItems'
 import { useProgressStore } from '../store/useProgressStore'
 import { usePetStore } from '../store/usePetStore'
@@ -25,7 +25,7 @@ export function Shop({ onBack }: ShopProps) {
           <h1 className="text-xl font-black">Shop</h1>
         </div>
         <Chip tone="credit">
-          <Coins size={14} strokeWidth={3} />
+          <IconCoins size={14} />
           {credits}
         </Chip>
       </header>
@@ -35,7 +35,7 @@ export function Shop({ onBack }: ShopProps) {
         {FOODS.map((food) => (
           <ListItem
             key={food.id}
-            icon={<Apple size={20} strokeWidth={2.5} />}
+            icon={<IconApple size={20} />}
             title={food.name}
             subtitle={`Restores ${food.restores} hunger`}
             trailing={
@@ -56,7 +56,7 @@ export function Shop({ onBack }: ShopProps) {
         {ACCESSORIES.map((item) => (
           <ListItem
             key={item.id}
-            icon={<Shirt size={20} strokeWidth={2.5} />}
+            icon={<IconShirt size={20} />}
             title={item.name}
             trailing={
               <Button

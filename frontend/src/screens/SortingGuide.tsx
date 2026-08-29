@@ -1,4 +1,4 @@
-import { Droplets, Recycle } from 'lucide-react'
+import { IconDroplet, IconRecycle } from '../components/icons'
 import type { Material } from 'shared/types'
 import { BIN_RULES } from '../data/binRules'
 import { Button } from '../components/Button'
@@ -33,12 +33,12 @@ export function SortingGuide({
 
       <div className="flex flex-col gap-2">
         <ListItem
-          icon={<Droplets size={20} strokeWidth={2.5} />}
+          icon={<IconDroplet size={20} />}
           title="Rinsed"
           trailing={<CheckToggle checked={rinseConfirmed} onToggle={onToggleRinse} label="Rinsed" />}
         />
         <ListItem
-          icon={<Recycle size={20} strokeWidth={2.5} />}
+          icon={<IconRecycle size={20} />}
           title="Sorted into the right bin"
           trailing={
             <CheckToggle
