@@ -28,21 +28,5 @@ export interface IdentifyResult {
 
 export type PetMood = 'idle' | 'happy' | 'eating' | 'sleepy' | 'sad'
 
-export type PetSpeciesId =
-  | 'sprout'
-  | 'bloop'
-  | 'pebble'
-  | 'nimbus'
-  | 'fern'
-  | 'coco'
-  | 'dashitchi'
-  | 'roarchi'
-  | 'jumpitchi'
-  | 'hugtchi'
-  | 'cooltchi'
-  | 'punchtchi'
-  | 'sparkitchi'
-  | 'chargetchi'
-  | 'peacetchi'
-  | 'spinchi'
+export type PetSpeciesId = 'chargetchi' | 'hugtchi' | 'punchtchi'
 export type AccessoryId = 'hat' | 'scarf' | 'glasses' | 'leafCrown'

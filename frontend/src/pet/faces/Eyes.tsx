@@ -1,39 +1,44 @@
 import type { PetMood } from 'shared/types';
 
+const INK = 'var(--ink)';
+
 export const Eyes = ({ mood }: { mood: PetMood }) => {
   if (mood === 'sleepy') {
     return (
-      <g stroke="var(--ink)" strokeWidth="5" strokeLinecap="round" fill="none">
-        <path d="M 35 45 Q 40 50 45 45" />
-        <path d="M 55 45 Q 60 50 65 45" />
+      <g fill={INK} shapeRendering="crispEdges">
+        <rect x="33" y="42" width="10" height="4" />
+        <rect x="57" y="42" width="10" height="4" />
       </g>
     );
   }
   if (mood === 'happy') {
     return (
-      <g stroke="var(--ink)" strokeWidth="5" strokeLinecap="round" fill="none">
-        <path d="M 35 45 Q 40 40 45 45" />
-        <path d="M 55 45 Q 60 40 65 45" />
+      <g fill={INK} shapeRendering="crispEdges">
+        <rect x="33" y="43" width="5" height="5" />
+        <rect x="38" y="38" width="5" height="5" />
+        <rect x="43" y="43" width="5" height="5" />
+        <rect x="57" y="43" width="5" height="5" />
+        <rect x="62" y="38" width="5" height="5" />
+        <rect x="67" y="43" width="5" height="5" />
       </g>
     );
   }
   if (mood === 'sad') {
     return (
-      <g fill="var(--ink)">
-        <circle cx="40" cy="45" r="4" />
-        <circle cx="60" cy="45" r="4" />
-        {/* Tears */}
-        <circle cx="40" cy="55" r="2" fill="#5EC7EE" />
-        <circle cx="60" cy="55" r="2" fill="#5EC7EE" />
+      <g shapeRendering="crispEdges">
+        <rect x="33" y="38" width="10" height="10" fill={INK} />
+        <rect x="57" y="38" width="10" height="10" fill={INK} />
+        <rect x="36" y="50" width="5" height="5" fill="#5EC7EE" />
+        <rect x="61" y="50" width="5" height="5" fill="#5EC7EE" />
       </g>
     );
   }
   return (
-    <g fill="var(--ink)">
-      <circle cx="40" cy="45" r="5" />
-      <circle cx="60" cy="45" r="5" />
-      <circle cx="42" cy="43" r="1.5" fill="white" />
-      <circle cx="62" cy="43" r="1.5" fill="white" />
+    <g shapeRendering="crispEdges">
+      <rect x="33" y="38" width="10" height="10" fill={INK} />
+      <rect x="57" y="38" width="10" height="10" fill={INK} />
+      <rect x="35" y="40" width="5" height="5" fill="white" />
+      <rect x="60" y="40" width="5" height="5" fill="white" />
     </g>
   );
 };

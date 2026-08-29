@@ -14,7 +14,7 @@ interface PetProps {
 }
 
 export function Pet({ species, mood, reaction }: PetProps) {
-  const Component = PET_COMPONENTS[species] || PET_COMPONENTS['dashitchi']; // Fallback
+  const Component = PET_COMPONENTS[species] || PET_COMPONENTS['chargetchi']; // Fallback
   const activeVariant = reaction !== 'idle' ? reaction : 'idle';
 
   return (
