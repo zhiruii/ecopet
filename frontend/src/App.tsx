@@ -29,7 +29,7 @@ export default function App() {
       {screen === 'onboarding' && <Onboarding onDone={() => setScreen('home')} />}
       {screen === 'home' && <Home onNavigate={setScreen} />}
       {screen === 'scan' && <ScanFlow onDone={() => setScreen('home')} />}
-      {screen === 'shop' && <Shop onBack={() => setScreen('home')} />}
+      {screen === 'shop' && <Shop />}
       {screen === 'stats' && <Stats onBack={() => setScreen('home')} />}
       {showTabBar && <TabBar active={screen} onNavigate={setScreen} />}
     </>
