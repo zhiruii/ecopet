@@ -11,7 +11,7 @@ interface SortingGuideProps {
   binConfirmed: boolean
   onToggleRinse: () => void
   onToggleBin: () => void
-  onConfirm: () => void
+  onConfirm?: () => void
 }
 
 /** Rinse + which-bin instruction, plus the two one-tap confirmations — a graded metric, not decoration. */
@@ -50,7 +50,7 @@ export function SortingGuide({
         />
       </div>
 
-      <Button onClick={onConfirm}>Confirm</Button>
+      {onConfirm && <Button onClick={onConfirm}>Confirm</Button>}
     </div>
   )
 }

@@ -15,6 +15,12 @@ export default defineConfig({
     // so the printed URL is always the URL that works.
     port: 5173,
     strictPort: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
   },
   resolve: {
     alias: {

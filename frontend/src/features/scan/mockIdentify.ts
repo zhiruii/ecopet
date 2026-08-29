@@ -16,19 +16,30 @@ const DEFAULT_RESULT: IdentifyResult = {
 
 const DELAY_MS = 1500
 
-/** Phase-1 stand-in for the real /api/identify call, and the demo-mode data source. */
-export function mockIdentify(options: MockIdentifyOptions = {}): Promise<IdentifyResult> {
+export function mockIdentify(options: MockIdentifyOptions = {}): Promise<IdentifyResult[]> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (options.force === 'error') {
         reject(new Error('mock identify: forced error'))
         return
       }
+      
+      const item1 = { ...DEFAULT_RESULT, material: options.material ?? DEFAULT_RESULT.material }
       if (options.force === 'lowConfidence') {
-        resolve({ ...DEFAULT_RESULT, confidence: 0.42 })
-        return
+        item1.confidence = 0.42
       }
-      resolve({ ...DEFAULT_RESULT, material: options.material ?? DEFAULT_RESULT.material })
+
+      // Add a second distinct item for the multi-item UI testing
+      const item2: IdentifyResult = {
+        material: 'pet_plastic',
+        itemType: '500ml water bottle',
+        estimatedGrams: 20,
+        recyclable: true,
+        rinseNeeded: true,
+        confidence: 0.88,
+      }
+
+      resolve([item1, item2])
     }, DELAY_MS)
   })
 }

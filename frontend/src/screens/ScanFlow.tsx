@@ -3,6 +3,9 @@ import { clsx } from 'clsx'
 import { IconAlert, IconPackageCheck, IconScan } from '../components/icons'
 import type { IdentifyResult } from 'shared/types'
 import { mockIdentify } from '../features/scan/mockIdentify'
+import { captureAndCompress } from '../features/scan/capture'
+import { identify } from '../features/scan/identify'
+import { useRef } from 'react'
 import { HAPPINESS_PER_SCAN } from '../features/economy/credits'
 import { useProgressStore } from '../store/useProgressStore'
 import type { ScanAward } from '../store/useProgressStore'
@@ -21,18 +24,33 @@ type State = 'idle' | 'identifying' | 'result' | 'guidance' | 'reward' | 'error'
 
 export function ScanFlow({ onDone }: ScanFlowProps) {
   const [state, setState] = useState<State>('idle')
-  const [result, setResult] = useState<IdentifyResult | null>(null)
-  const [rinseConfirmed, setRinseConfirmed] = useState(false)
-  const [binConfirmed, setBinConfirmed] = useState(false)
-  const [award, setAward] = useState<ScanAward | null>(null)
+  const [results, setResults] = useState<IdentifyResult[]>([])
+  const [confirmations, setConfirmations] = useState<{rinseConfirmed: boolean, binConfirmed: boolean}[]>([])
+  const [awards, setAwards] = useState<ScanAward[]>([])
   const awardScan = useProgressStore((s) => s.awardScan)
   const addHappiness = usePetStore((s) => s.addHappiness)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  async function handleCapture(file: File) {
+    setState('identifying')
+    try {
+      const blob = await captureAndCompress(file)
+      const rs = await identify(blob)
+      setResults(rs)
+      setConfirmations(rs.map(() => ({ rinseConfirmed: false, binConfirmed: false })))
+      setState('result')
+    } catch (err) {
+      console.error('Scan failed:', err)
+      setState('error')
+    }
+  }
 
   async function runMock(force?: 'lowConfidence' | 'error') {
     setState('identifying')
     try {
-      const r = await mockIdentify({ force })
-      setResult(r)
+      const rs = await mockIdentify({ force })
+      setResults(rs)
+      setConfirmations(rs.map(() => ({ rinseConfirmed: false, binConfirmed: false })))
       setState('result')
     } catch {
       setState('error')
@@ -40,10 +58,16 @@ export function ScanFlow({ onDone }: ScanFlowProps) {
   }
 
   function confirmAndAward() {
-    if (!result) return
-    const scanAward = awardScan({ result, rinseConfirmed, binConfirmed })
-    if (scanAward.record.recyclable) addHappiness(HAPPINESS_PER_SCAN)
-    setAward(scanAward)
+    if (results.length === 0) return
+    let totalHappiness = 0
+    const scanAwards = results.map((result, i) => {
+      const conf = confirmations[i] || { rinseConfirmed: false, binConfirmed: false }
+      const scanAward = awardScan({ result, rinseConfirmed: conf.rinseConfirmed, binConfirmed: conf.binConfirmed })
+      if (scanAward.record.recyclable) totalHappiness += HAPPINESS_PER_SCAN
+      return scanAward
+    })
+    if (totalHappiness > 0) addHappiness(totalHappiness)
+    setAwards(scanAwards)
     setState('reward')
   }
 
@@ -56,28 +80,35 @@ export function ScanFlow({ onDone }: ScanFlowProps) {
 
       {state === 'idle' && (
         <>
-          <Card className="flex flex-col items-center gap-3 py-10 text-center">
+          <Card className="flex flex-col items-center gap-5 py-10 text-center">
             <span className="flex h-16 w-16 items-center justify-center border-[3px] border-ink bg-info/20 text-ink">
               <IconScan size={28} />
             </span>
-            <p className="font-bold">Real capture opens the camera here</p>
-            <p className="text-sm opacity-70">
-              features/scan/capture.ts exists — this wireframe drives mockIdentify so every
-              outcome is testable before the camera UI ships.
-            </p>
+            <div>
+              <p className="font-bold">Ready to recycle?</p>
+              <p className="text-sm opacity-70">
+                Snap a photo of the item you want to recycle.
+              </p>
+            </div>
+            
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) handleCapture(file)
+                // reset input so the same file can be picked again if needed
+                if (e.target) e.target.value = ''
+              }}
+            />
+            
+            <Button onClick={() => fileInputRef.current?.click()}>
+              Tap to scan
+            </Button>
           </Card>
-          <div className="flex flex-col gap-2">
-            <p className="text-xs font-bold uppercase tracking-wide opacity-50">
-              Dev: mock outcomes
-            </p>
-            <Button onClick={() => runMock()}>Confident scan</Button>
-            <Button variant="secondary" onClick={() => runMock('lowConfidence')}>
-              Low-confidence scan
-            </Button>
-            <Button variant="secondary" onClick={() => runMock('error')}>
-              Failed scan
-            </Button>
-          </div>
         </>
       )}
 
@@ -99,41 +130,72 @@ export function ScanFlow({ onDone }: ScanFlowProps) {
         </Card>
       )}
 
-      {state === 'result' && result && (
-        <Card className="flex flex-col gap-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <p className="font-bold">{result.itemType}</p>
-              <p className="text-sm capitalize opacity-70">{result.material.replace('_', ' ')}</p>
-            </div>
-            <Chip tone={result.recyclable ? 'good' : 'bad'} className="shrink-0">
-              {result.recyclable ? 'Recyclable' : 'Not recyclable'}
-            </Chip>
-          </div>
-          <p className="text-sm opacity-70">Confidence: {Math.round(result.confidence * 100)}%</p>
-          <Button onClick={() => setState('guidance')}>Next</Button>
-        </Card>
+      {state === 'result' && results.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h2 className="text-lg font-black text-center mb-2">We found {results.length} {results.length === 1 ? 'item' : 'items'}:</h2>
+          {results.map((res, i) => (
+            <Card key={i} className="flex flex-col gap-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-bold">{res.itemType}</p>
+                  <p className="text-sm capitalize opacity-70">{res.material.replace('_', ' ')}</p>
+                </div>
+                <Chip tone={res.recyclable ? 'good' : 'bad'} className="shrink-0">
+                  {res.recyclable ? 'Recyclable' : 'Not recyclable'}
+                </Chip>
+              </div>
+              <p className="text-sm opacity-70">Confidence: {Math.round(res.confidence * 100)}%</p>
+            </Card>
+          ))}
+          <Button onClick={() => setState('guidance')} className="mt-2">Next</Button>
+        </div>
       )}
 
-      {state === 'guidance' && result && (
-        <SortingGuide
-          material={result.material}
-          rinseConfirmed={rinseConfirmed}
-          binConfirmed={binConfirmed}
-          onToggleRinse={() => setRinseConfirmed((v) => !v)}
-          onToggleBin={() => setBinConfirmed((v) => !v)}
-          onConfirm={confirmAndAward}
-        />
+      {state === 'guidance' && results.length > 0 && (
+        <div className="flex flex-col gap-5 pb-10">
+          {results.map((res, i) => (
+            <Card key={i} className="flex flex-col gap-4">
+              <div className="border-b-[3px] border-ink pb-2">
+                <h2 className="text-lg font-black">{res.itemType}</h2>
+              </div>
+              <SortingGuide
+                material={res.material}
+                rinseConfirmed={confirmations[i]?.rinseConfirmed ?? false}
+                binConfirmed={confirmations[i]?.binConfirmed ?? false}
+                onToggleRinse={() => {
+                  const newConf = [...confirmations]
+                  if (newConf[i]) {
+                    newConf[i] = { ...newConf[i], rinseConfirmed: !newConf[i].rinseConfirmed }
+                  }
+                  setConfirmations(newConf)
+                }}
+                onToggleBin={() => {
+                  const newConf = [...confirmations]
+                  if (newConf[i]) {
+                    newConf[i] = { ...newConf[i], binConfirmed: !newConf[i].binConfirmed }
+                  }
+                  setConfirmations(newConf)
+                }}
+              />
+            </Card>
+          ))}
+          <Button onClick={confirmAndAward}>Confirm All Items</Button>
+        </div>
       )}
 
-      {state === 'reward' && award && (
-        <RewardSummary award={award} onDone={onDone} />
+      {state === 'reward' && awards.length > 0 && (
+        <div className="flex flex-col gap-5 pb-10">
+          {awards.map((aw, i) => (
+            <RewardSummary key={i} award={aw} />
+          ))}
+          <Button onClick={onDone}>Back to home</Button>
+        </div>
       )}
     </div>
   )
 }
 
-function RewardSummary({ award, onDone }: { award: ScanAward; onDone: () => void }) {
+function RewardSummary({ award }: { award: ScanAward }) {
   const { record, breakdown } = award
   const happiness = record.recyclable ? HAPPINESS_PER_SCAN : 0
 
@@ -184,7 +246,6 @@ function RewardSummary({ award, onDone }: { award: ScanAward; onDone: () => void
         </div>
       )}
 
-      <Button onClick={onDone}>Back to home</Button>
     </Card>
   )
 }

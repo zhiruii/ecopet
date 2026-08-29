@@ -64,7 +64,7 @@ export const useProgressStore = create<ProgressState>()(
           co2SavedKg,
         })
         const record: ScanRecord = {
-          id: crypto.randomUUID(),
+          id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2),
           timestamp: Date.now(),
           material: result.material,
           itemType: result.itemType,

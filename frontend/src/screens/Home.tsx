@@ -257,9 +257,9 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
             <div className="flex flex-col gap-1.5 border-[3px] border-ink bg-card p-4 shadow-[3px_3px_0_var(--ink)]">
               <div className="flex items-center justify-between text-sm font-bold">
                 <span>Happiness</span>
-                <span className="opacity-60 tabular-nums">{happiness} / 100</span>
+                <span className="opacity-60 tabular-nums">{happiness} / 500</span>
               </div>
-              <ProgressBar value={happiness} />
+              <ProgressBar value={happiness} max={500} />
             </div>
 
             <ListItem

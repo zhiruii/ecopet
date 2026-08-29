@@ -11,7 +11,7 @@ import type { FoodInventory } from '../data/shopItems'
 import { PET_SPECIES_LIST } from '../pet/registry'
 import { persistConfig } from './persist'
 
-const MAX_HAPPINESS = 100
+const MAX_HAPPINESS = 500
 
 interface PetState {
   species: PetSpeciesId | null

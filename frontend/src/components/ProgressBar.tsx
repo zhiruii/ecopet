@@ -1,13 +1,14 @@
 import { clsx } from 'clsx'
 
 interface ProgressBarProps {
-  /** 0-100 */
   value: number
+  max?: number
   className?: string
 }
 
-export function ProgressBar({ value, className }: ProgressBarProps) {
-  const clamped = Math.max(0, Math.min(100, value))
+export function ProgressBar({ value, max = 100, className }: ProgressBarProps) {
+  const clamped = Math.max(0, Math.min(max, value))
+  const percentage = max > 0 ? (clamped / max) * 100 : 0
   return (
     <div
       className={clsx(
@@ -15,7 +16,7 @@ export function ProgressBar({ value, className }: ProgressBarProps) {
         className,
       )}
     >
-      <div className="h-full bg-info transition-[width]" style={{ width: `${clamped}%` }} />
+      <div className="h-full bg-info transition-[width]" style={{ width: `${percentage}%` }} />
     </div>
   )
 }
