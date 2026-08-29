@@ -232,15 +232,24 @@ automatically. **Respect `prefers-reduced-motion`** — drop to opacity/colour c
 
 ## 7. Design tokens (`styles/tokens.css`)
 
+Base surface (`--ink`, `--paper`, `--card`) stays the original spec below — the palette is
+reserved for accents (buttons, tags/chips, icons), not the background. Palette source: a
+user-supplied pastel swatch (dusty periwinkle `#809bce`, dusty blue `#95b8d1`, mint `#b8e0d2`,
+pale sage `#d6eadf`, dusty pink `#eac4d5`). `--accent` and `--bad` are deepened/saturated
+derivatives of the swatch's blue and pink so solid-fill buttons and the "not recyclable" alert
+clear ~4.5:1 contrast with white text — the raw pastels can't. `--warn` has no counterpart in
+the swatch (no warm hue supplied) and stays a standalone muted amber.
+
 ```
 --ink:        #14396E   /* every outline, every heading */
 --paper:      #FBF9F3   /* app background, warm off-white */
 --card:       #FFFFFF
---accent:     #2E9BE0   /* primary action */
---good:       #4CAF50   /* recyclable / success */
---warn:       #E8A33D   /* rinse needed */
---bad:        #E01E26   /* not recyclable */
---credit:     #FFD400   /* coins */
+--accent:     #4C63A8   /* deepened periwinkle — primary action */
+--info:       #95B8D1   /* dusty blue — progress fill, secondary emphasis */
+--good:       #B8E0D2   /* mint — recyclable / success (pairs with ink text) */
+--warn:       #96642C   /* muted amber — caution / streak (no swatch warm hue) */
+--bad:        #B23449   /* deepened dusty pink — not recyclable (pairs with white text) */
+--credit:     #EAC4D5   /* dusty pink — coins (pairs with ink text) */
 ```
 
 Type: one rounded sans (Nunito / Baloo 2 / Fredoka). Heavy weights, generous letter-spacing on
