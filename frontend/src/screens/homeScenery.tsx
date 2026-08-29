@@ -58,8 +58,8 @@ export function PixelBin({ onClick }: { onClick: () => void }) {
       onClick={onClick}
     >
       <div className="absolute top-0 -left-0.5 w-[110%] h-4 border-[3px] border-ink bg-[#7BCAEE]" />
-      <div className="absolute bottom-0 w-full h-16 border-[3px] border-ink bg-[#4C9FCB] flex items-center justify-center">
-        <IconRecycle size={24} className="text-white" />
+      <div className="absolute bottom-0 w-full h-16 border-[3px] border-ink bg-[#4C9FCB] flex items-center justify-center overflow-hidden">
+        <img src="/recycling-icon.png" alt="Recycle" className="w-10 h-10 mb-1 object-contain pixelated" style={{ imageRendering: 'pixelated' }} />
       </div>
     </div>
   );

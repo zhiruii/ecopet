@@ -199,16 +199,7 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
           className="relative flex flex-col items-center justify-center cursor-pointer transform scale-[0.72] hover:scale-[0.75] transition-transform duration-300 pointer-events-auto"
           onClick={() => triggerReaction('wobble')}
         >
-          {/* Status bubble — silent while eating, so nothing talks over the moment */}
-          {flight ? null : scansToday === 0 ? (
-            <div className="absolute -top-10 border-[3px] border-ink bg-card px-3 py-1.5 font-bold text-xs shadow-[2px_2px_0_var(--ink)] z-20 animate-bounce whitespace-nowrap">
-              I want a recycled snack!
-            </div>
-          ) : happiness < 50 ? (
-            <div className="absolute -top-10 border-[3px] border-ink bg-card px-3 py-1.5 font-bold text-xs shadow-[2px_2px_0_var(--ink)] z-20 animate-bounce whitespace-nowrap">
-              Cheer me up with a snack!
-            </div>
-          ) : null}
+
 
           <Pet species={species} mood={displayMood} reaction={reaction} accessories={worn} />
 
@@ -262,16 +253,7 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
               <ProgressBar value={happiness} max={500} />
             </div>
 
-            <ListItem
-              icon={<IconScan size={20} />}
-              title="Got something to recycle?"
-              subtitle="Snap it, sort it, earn credits"
-              trailing={
-                <Button className="px-4 py-2 text-sm" onClick={() => onNavigate('scan')}>
-                  Start
-                </Button>
-              }
-            />
+
           </>
         )}
       </div>
