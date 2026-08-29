@@ -13,7 +13,7 @@ import { usePetWalk } from '../pet/animations/usePetWalk'
 import { Button } from '../components/Button'
 import { ProgressBar } from '../components/ProgressBar'
 import { ListItem } from '../components/ListItem'
-import { PixelSun, PixelCloud, PixelBird, PixelTree, PixelBush, PixelBin } from './homeScenery'
+import { PixelSun, PixelCloud, PixelBird, PixelTree, PixelBush, PixelBin, PixelPlane } from './homeScenery'
 
 /** The food is eaten in three bites, so the icon vanishes a third at a time. */
 const BITES = 3
@@ -49,6 +49,35 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
   const { x: walkX, y: walkY, facingLeft, isWalking } = usePetWalk(flight !== null)
   const [showHeart, setShowHeart] = useState(false)
   
+  const [planeKey, setPlaneKey] = useState(0)
+  const [isPlaneFlying, setIsPlaneFlying] = useState(false)
+  const isPlaneBusy = useRef(false)
+
+  const triggerPlane = useCallback(() => {
+    if (isPlaneBusy.current) return
+    isPlaneBusy.current = true
+    
+    // 0.5s delay before plane appears
+    setTimeout(() => {
+      setIsPlaneFlying(true)
+      setPlaneKey(k => k + 1)
+      
+      // Plane animation takes 40s
+      setTimeout(() => {
+        setIsPlaneFlying(false)
+        isPlaneBusy.current = false
+      }, 40000)
+    }, 500)
+  }, [])
+
+  useEffect(() => {
+    if (isPlaneFlying || isPlaneBusy.current) return
+    const timer = setTimeout(() => {
+      triggerPlane()
+    }, 20000)
+    return () => clearTimeout(timer)
+  }, [isPlaneFlying, triggerPlane])
+
   const petScale = 0.72 - (walkY / 100) * 0.32
 
   const handlePetTap = () => {
@@ -137,7 +166,10 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
       <div className="absolute inset-0 z-0 pointer-events-none flex flex-col overflow-hidden">
         {/* Sky / Distant Campus */}
         <div className="flex-[3] relative">
-          <PixelSun className="absolute top-6 left-8" />
+          <PixelSun className="absolute top-6 left-8" onClick={triggerPlane} />
+          {isPlaneFlying && (
+            <PixelPlane key={planeKey} className="top-[115px]" />
+          )}
 
           <PixelCloud className="absolute top-14 left-4 opacity-80 animate-float-slow" />
           <PixelCloud className="absolute top-6 right-32 opacity-70 animate-float-medium" />
@@ -195,8 +227,8 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
       </div>
 
       {/* ═══ Header UI ═══ */}
-      <div className="relative z-20 flex justify-end items-start p-6">
-        <div className="border-[3px] border-ink bg-card px-4 py-2 font-bold flex items-center gap-2 shadow-[3px_3px_0_var(--ink)] text-[var(--accent-blue)]">
+      <div className="relative z-20 flex justify-end items-start p-6 pointer-events-none">
+        <div className="border-[3px] border-ink bg-card px-4 py-2 font-bold flex items-center gap-2 shadow-[3px_3px_0_var(--ink)] text-[var(--accent-blue)] pointer-events-auto">
           <IconCoins size={20} className="text-[var(--accent-blue)]" /> {credits}
         </div>
       </div>

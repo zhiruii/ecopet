@@ -101,3 +101,27 @@ input {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
+
+@keyframes plane-fly {
+  0% { transform: translateX(500px); }
+  100% { transform: translateX(-500px); }
+}
+
+@keyframes propeller-spin {
+  0% { transform: scaleY(1); }
+  50% { transform: scaleY(-1); }
+  100% { transform: scaleY(1); }
+}
+
+@keyframes banner-wave {
+  0% { transform: skewY(0deg) translateY(0px); }
+  25% { transform: skewY(-2deg) translateY(-1px); }
+  75% { transform: skewY(2deg) translateY(1px); }
+  100% { transform: skewY(0deg) translateY(0px); }
+}
+
+@keyframes sunburst-line {
+  0% { transform: scaleX(0) translateX(0); opacity: 1; }
+  50% { transform: scaleX(1) translateX(10px); opacity: 1; }
+  100% { transform: scaleX(0) translateX(20px); opacity: 0; }
+}
