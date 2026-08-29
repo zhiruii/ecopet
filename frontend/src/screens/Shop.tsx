@@ -38,13 +38,8 @@ export function Shop({ onFeed }: ShopProps) {
         </div>
       </header>
 
-      <section className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-black uppercase tracking-wide">Consumables</h2>
-          <p className="text-xs font-bold leading-snug text-[var(--text-muted)]">
-            Buy food to stock up. Feed takes you home so you can hand it over yourself.
-          </p>
-        </div>
+      <section className="flex flex-col gap-2">
+        <h2 className="text-lg font-black uppercase tracking-wide">Consumables</h2>
         <div className="flex flex-col gap-2.5">
           {FOODS.map((food) => (
             <FoodRow
@@ -60,14 +55,9 @@ export function Shop({ onFeed }: ShopProps) {
         </div>
       </section>
 
-      <section className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-black uppercase tracking-wide">Wardrobe</h2>
-          <p className="text-xs font-bold leading-snug text-[var(--text-muted)]">
-            Wear as many as you own. Little Hat and Leaf Crown share the head slot, so putting one
-            on takes the other off.
-          </p>
-        </div>
+      <section className="flex flex-col gap-2 mt-2">
+        <h2 className="text-lg font-black uppercase tracking-wide">Wardrobe</h2>
+        
 
         {species && (
           <div className="pixel-notch flex items-center gap-4 border-[3px] border-ink bg-card p-3 shadow-[3px_3px_0_var(--ink)]">
