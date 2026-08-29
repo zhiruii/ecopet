@@ -64,34 +64,3 @@ export function PixelBin({ onClick }: { onClick: () => void }) {
     </div>
   );
 }
-
-/** Flat-color pixel campus building block: body + roof band + window grid. */
-export function PixelBuilding({
-  className,
-  body,
-  roof,
-  window,
-  cols = 2,
-  rows = 2,
-}: {
-  className?: string;
-  body: string;
-  roof: string;
-  window: string;
-  cols?: number;
-  rows?: number;
-}) {
-  return (
-    <div className={`relative border-[3px] border-ink ${className ?? ''}`} style={{ background: body }}>
-      <div className="absolute top-0 left-0 w-full h-3" style={{ background: roof }} />
-      <div
-        className="absolute inset-0 grid gap-2 p-3 pt-5"
-        style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gridTemplateRows: `repeat(${rows}, 1fr)` }}
-      >
-        {Array.from({ length: cols * rows }).map((_, i) => (
-          <div key={i} className="border-[2px] border-ink" style={{ background: window }} />
-        ))}
-      </div>
-    </div>
-  );
-}

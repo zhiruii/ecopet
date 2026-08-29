@@ -9,7 +9,7 @@ import { usePetReaction } from '../pet/animations/usePetReaction'
 import { Button } from '../components/Button'
 import { ProgressBar } from '../components/ProgressBar'
 import { ListItem } from '../components/ListItem'
-import { PixelSun, PixelCloud, PixelBird, PixelTree, PixelBush, PixelBin, PixelBuilding } from './homeScenery'
+import { PixelSun, PixelCloud, PixelBird, PixelTree, PixelBush, PixelBin } from './homeScenery'
 
 interface HomeProps {
   onNavigate: (screen: Screen) => void
@@ -74,40 +74,6 @@ export function Home({ onNavigate }: HomeProps) {
           <div className="absolute bottom-0 left-0 w-full h-32 z-0" style={{ background: '#6BA06D' }} />
           <div className="absolute bottom-8 left-0 w-full h-8 z-0" style={{ background: '#5E8F60' }} />
           <div className="absolute bottom-16 left-[8%] w-[50%] h-6 z-0" style={{ background: '#5E8F60' }} />
-
-          {/* Campus Buildings */}
-          <div className="absolute bottom-4 left-0 w-full flex items-end justify-center gap-1.5 px-4 z-10">
-            <PixelBuilding
-              className="w-24 h-28"
-              body="#D4A99A"
-              roof="#B38379"
-              window="#F6F2E6"
-              cols={2}
-              rows={2}
-            />
-            <div className="relative flex flex-col items-center z-10">
-              <div
-                className="w-24 h-12 border-[3px] border-b-0 border-ink"
-                style={{ background: '#B38379', clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
-              />
-              <PixelBuilding
-                className="w-20 h-32 -mt-[3px]"
-                body="#F0E4D4"
-                roof="#E8D9C8"
-                window="#FFFFFF"
-                cols={2}
-                rows={3}
-              />
-            </div>
-            <PixelBuilding
-              className="w-28 h-24"
-              body="#E0C488"
-              roof="#C4A465"
-              window="#F6F2E6"
-              cols={3}
-              rows={2}
-            />
-          </div>
         </div>
 
         {/* Ground */}
@@ -149,7 +115,7 @@ export function Home({ onNavigate }: HomeProps) {
         style={{ bottom: '34%' }}
       >
         <div
-          className="relative flex flex-col items-center justify-center cursor-pointer transform scale-[1.20] hover:scale-[1.25] transition-transform duration-300 pointer-events-auto"
+          className="relative flex flex-col items-center justify-center cursor-pointer transform scale-[0.72] hover:scale-[0.75] transition-transform duration-300 pointer-events-auto"
           onClick={() => triggerReaction('wobble')}
         >
           {/* Status bubble */}
