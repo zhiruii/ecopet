@@ -24,8 +24,8 @@ export function ListItem({ icon, title, subtitle, trailing, className }: ListIte
         </span>
       )}
       <div className="min-w-0 flex-1">
-        <p className="truncate font-bold">{title}</p>
-        {subtitle && <p className="truncate text-sm opacity-70">{subtitle}</p>}
+        <p className="font-bold leading-snug">{title}</p>
+        {subtitle && <p className="text-sm leading-snug opacity-70">{subtitle}</p>}
       </div>
       {trailing && <div className="shrink-0">{trailing}</div>}
     </div>
