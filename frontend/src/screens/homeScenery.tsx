@@ -19,22 +19,22 @@ export function PixelSun({ className, onClick }: { className?: string; onClick?:
   }, [onClick]);
 
   return (
-    <div 
+    <div
       className={`${onClick ? 'cursor-pointer pointer-events-auto' : ''} ${className || 'relative'}`}
       onClick={handleClick}
     >
       <PixelSprite grid={SUN_GRID} palette={SUN_PALETTE} unit={6} className="relative z-10" />
-      
+
       {/* Sunburst lines */}
       {bursts.map(id => (
         <div key={id} className="absolute inset-0 pointer-events-none">
           {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
-            <div 
+            <div
               key={deg}
               className="absolute top-1/2 left-1/2 origin-left"
               style={{ transform: `translateY(-50%) rotate(${deg}deg)` }}
             >
-              <div 
+              <div
                 className="w-4 h-1 bg-[#FFD25A] ml-8"
                 style={{ animation: 'sunburst-line 0.6s ease-out forwards' }}
               />
@@ -84,8 +84,15 @@ export function PixelTree({ className, tone = '#3A7A3E' }: { className?: string;
 
 const BUSH_GRID = ['...XXXX.....', '..XXXXXXXX..', '.XXXXXXXXXX.', 'XXXXXXXXXXXX', '.XXXXXXXXXX.'];
 
-export function PixelBush({ className }: { className?: string }) {
-  return <PixelSprite grid={BUSH_GRID} palette={{ X: '#3A7A3E' }} unit={4} className={className} />;
+export function PixelBush({ className, onClick }: { className?: string; onClick?: () => void }) {
+  return (
+    <div 
+      className={`${className || ''} ${onClick ? 'cursor-pointer pointer-events-auto transition-transform duration-150 active:scale-95' : ''}`}
+      onClick={onClick}
+    >
+      <PixelSprite grid={BUSH_GRID} palette={{ X: '#3A7A3E' }} unit={4} />
+    </div>
+  );
 }
 
 const PLANE_GRID = [
@@ -122,9 +129,9 @@ export function PixelPlane({ className }: { className?: string }) {
       style={{ animation: 'plane-fly 40s linear forwards', left: 0 }}
     >
       {/* Banner */}
-      <div 
+      <div
         className="flex items-center origin-left absolute"
-        style={{ 
+        style={{
           animation: 'banner-wave 1.5s ease-in-out infinite',
           left: '128px', // positioned behind the tail
           top: '32px'
@@ -134,7 +141,7 @@ export function PixelPlane({ className }: { className?: string }) {
         <div className="w-4 h-0.5 bg-ink" />
         <div className="w-0.5 h-4 bg-ink -ml-0.5 mt-2" style={{ transform: 'rotate(-45deg)' }} />
         <div className="w-4 h-0.5 bg-ink -ml-0.5 mt-4" />
-        
+
         {/* Banner body */}
         <div className="relative px-4 py-1.5 bg-white border-2 border-ink pixel-notch-sm text-[#2C6E33] font-black text-[10px] tracking-widest whitespace-nowrap ml-1">
           RECYCLE!!
@@ -144,13 +151,13 @@ export function PixelPlane({ className }: { className?: string }) {
       {/* Plane Body Sprite */}
       <div className="relative">
         <PixelSprite grid={PLANE_GRID} palette={PLANE_PALETTE} unit={unit} />
-        
+
         {/* Tail fin NUS text (Pixel Perfect SVG) */}
-        <div 
+        <div
           className="absolute"
-          style={{ 
-            top: '7px', 
-            right: '21px', 
+          style={{
+            top: '7px',
+            right: '21px',
             width: '13px',
             height: '5px'
           }}
@@ -175,7 +182,7 @@ export function PixelPlane({ className }: { className?: string }) {
         </div>
 
         {/* Propeller */}
-        <div 
+        <div
           className="absolute w-2 h-[28px]"
           style={{ top: '32px', left: '4px' }}
         >
@@ -194,13 +201,13 @@ export function PixelBin({ onClick }: { onClick: () => void }) {
       className="absolute bottom-[calc(38%+20px)] left-[4%] w-[60px] pointer-events-auto cursor-pointer transition-transform duration-150 hover:-translate-y-1 active:translate-y-0"
       onClick={onClick}
     >
-      <img 
-        src="/recyclingbin.png" 
+      <img
+        src="/recyclingbin.png"
         alt="Recycle Bin"
         className="w-full h-auto drop-shadow-md"
-        style={{ 
+        style={{
           imageRendering: 'pixelated',
-          filter: 'hue-rotate(115deg) saturate(1.2)' 
+          filter: 'hue-rotate(115deg) saturate(1.2)'
         }}
       />
     </div>

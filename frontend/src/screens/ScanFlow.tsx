@@ -144,7 +144,6 @@ export function ScanFlow({ onDone }: ScanFlowProps) {
                   {res.recyclable ? 'Recyclable' : 'Not recyclable'}
                 </Chip>
               </div>
-              <p className="text-sm opacity-70">Confidence: {Math.round(res.confidence * 100)}%</p>
             </Card>
           ))}
           <Button onClick={() => setState('guidance')} className="mt-2">Next</Button>
@@ -160,6 +159,7 @@ export function ScanFlow({ onDone }: ScanFlowProps) {
               </div>
               <SortingGuide
                 material={res.material}
+                recyclable={res.recyclable}
                 rinseConfirmed={confirmations[i]?.rinseConfirmed ?? false}
                 binConfirmed={confirmations[i]?.binConfirmed ?? false}
                 onToggleRinse={() => {
@@ -220,27 +220,24 @@ function RewardSummary({ award }: { award: ScanAward }) {
 
       {record.recyclable && (
         <div className="flex flex-col gap-1.5 border-[3px] border-ink bg-paper p-3">
-          <AwardLine label="Recycled item" value={breakdown.base} unit="c" />
+          <AwardLine label="Recycled item" value={breakdown.base} />
           <AwardLine
             label="Rinsed it"
             value={breakdown.rinseBonus}
-            unit="c"
             hint={breakdown.rinseBonus === 0 ? 'not confirmed' : undefined}
           />
           <AwardLine
             label="Right bin"
             value={breakdown.binBonus}
-            unit="c"
             hint={breakdown.binBonus === 0 ? 'not confirmed' : undefined}
           />
           <AwardLine
             label={`CO₂ saved ${record.co2SavedKg.toFixed(2)} kg`}
             value={breakdown.co2Bonus}
-            unit="c"
           />
 
           <div className="mt-1 border-t-[3px] border-dashed border-ink pt-2">
-            <AwardLine label="Credits" value={breakdown.total} unit="c" emphasis />
+            <AwardLine label="Credits" value={breakdown.total} emphasis />
             <AwardLine label="Happiness" value={happiness} emphasis />
           </div>
         </div>
@@ -253,13 +250,11 @@ function RewardSummary({ award }: { award: ScanAward }) {
 function AwardLine({
   label,
   value,
-  unit,
   hint,
   emphasis,
 }: {
   label: string
   value: number
-  unit?: string
   hint?: string
   emphasis?: boolean
 }) {
@@ -278,7 +273,6 @@ function AwardLine({
       </span>
       <span className="shrink-0 tabular-nums">
         +{value}
-        {unit}
       </span>
     </div>
   )

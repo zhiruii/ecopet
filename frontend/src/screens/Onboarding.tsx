@@ -53,7 +53,7 @@ export function Onboarding({ onDone }: OnboardingProps) {
 
       {step === 'species' && (
         <Card className="flex flex-col gap-4">
-          <p className="font-bold">Pick a pet (placeholder grid — pet/PetPicker.tsx replaces this)</p>
+          <p className="font-bold">Pick a pet</p>
           <div className="flex flex-col gap-2">
             {SPECIES_IDS.map((id) => (
               <Button

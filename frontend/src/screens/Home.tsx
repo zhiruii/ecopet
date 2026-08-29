@@ -18,6 +18,8 @@ import { PixelSun, PixelCloud, PixelBird, PixelTree, PixelBush, PixelBin, PixelP
 /** The food is eaten in three bites, so the icon vanishes a third at a time. */
 const BITES = 3
 
+// Removed CelebrationOverlay as requested
+
 interface Flight {
   food: FoodId
   /** Icon's start box, measured relative to the screen container. */
@@ -34,7 +36,7 @@ interface HomeProps {
 }
 
 export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
-  const { species, name, happiness, worn, inventory, consumeFood } = usePetStore()
+  const { species, name, happiness, worn, inventory, consumeFood, addHappiness } = usePetStore()
   const { credits, scans } = useProgressStore()
   const { reaction, triggerReaction } = usePetReaction()
   const [showRecyclePopup, setShowRecyclePopup] = useState(false)
@@ -46,7 +48,27 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
   const [flight, setFlight] = useState<Flight | null>(null)
   const [bite, setBite] = useState(0)
   
-  const { x: walkX, y: walkY, facingLeft, isWalking } = usePetWalk(flight !== null)
+  const [isCelebrating, setIsCelebrating] = useState(false)
+  const prevHappiness = useRef(happiness)
+  
+  const [bushCooldown, setBushCooldown] = useState(false)
+  const [berries, setBerries] = useState<number[]>([])
+  
+  useEffect(() => {
+    if (happiness === 500 && prevHappiness.current < 500) {
+      setIsCelebrating(true)
+    }
+    prevHappiness.current = happiness
+  }, [happiness])
+
+  useEffect(() => {
+    if (isCelebrating) {
+      const timer = setTimeout(() => setIsCelebrating(false), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [isCelebrating])
+
+  const { x: walkX, y: walkY, facingLeft, isWalking, bounceY } = usePetWalk(flight !== null, isCelebrating)
   const [showHeart, setShowHeart] = useState(false)
   
   const [planeKey, setPlaneKey] = useState(0)
@@ -79,6 +101,24 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
   }, [isPlaneFlying, triggerPlane])
 
   const petScale = 0.72 - (walkY / 100) * 0.32
+
+  const handleBushClick = () => {
+    if (bushCooldown) return
+    
+    // Add happiness
+    addHappiness(400)
+    
+    // Cooldown logic
+    setBushCooldown(true)
+    setTimeout(() => setBushCooldown(false), 10000) // 10 seconds
+    
+    // Trigger berry drop animation
+    const berryId = Date.now()
+    setBerries((prev) => [...prev, berryId])
+    setTimeout(() => {
+      setBerries((prev) => prev.filter((id) => id !== berryId))
+    }, 1000)
+  }
 
   const handlePetTap = () => {
     triggerReaction('wobble')
@@ -212,7 +252,24 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
 
           <PixelBin onClick={() => window.open('https://www.recycle.gov.sg/', '_blank', 'noopener,noreferrer')} />
 
-          <PixelBush className="absolute bottom-[40%] right-[8%]" />
+          <div 
+            className="absolute bottom-[40%] right-[8%] z-20 pointer-events-auto cursor-pointer w-[48px] h-[20px]"
+            onClick={handleBushClick}
+          >
+            <PixelBush 
+              className={berries.length > 0 ? "animate-[bush-shake_0.4s_ease-in-out]" : ""}
+            />
+            {berries.map((id) => (
+              <div
+                key={id}
+                className="absolute top-[20%] left-[50%] w-2 h-2 bg-red-500 z-10 pointer-events-none"
+                style={{
+                  boxShadow: 'inset -1px -1px 0 rgba(0,0,0,0.3)',
+                  animation: 'berry-drop 1s forwards'
+                }}
+              />
+            ))}
+          </div>
 
           <div className="absolute bottom-[47%] right-[25%] flex gap-1 opacity-70 pointer-events-none">
             <div className="w-1.5 h-3 bg-[#4A8F4E]" />
@@ -241,7 +298,8 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
           left: `${walkX}%`,
           bottom: `${25 + (walkY / 100) * 13}%`,
           scale: petScale,
-          translateX: '-50%' 
+          translateX: '-50%',
+          translateY: `-${bounceY || 0}px`,
         }}
       >
         <div
@@ -249,6 +307,7 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
           className="relative flex flex-col items-center justify-center cursor-pointer transform origin-bottom hover:scale-105 transition-transform duration-300 pointer-events-auto"
           onClick={handlePetTap}
         >
+          
           <AnimatePresence>
             {showHeart && (
               <motion.div

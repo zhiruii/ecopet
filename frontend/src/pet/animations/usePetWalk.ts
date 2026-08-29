@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 
-export function usePetWalk(isPaused: boolean = false) {
+export function usePetWalk(isPaused: boolean = false, isCelebrating: boolean = false) {
   const [x, setX] = useState(50)
   const [y, setY] = useState(0)
   const [facingLeft, setFacingLeft] = useState(false)
   const [isWalking, setIsWalking] = useState(false)
+  const [bounceY, setBounceY] = useState(0)
   
   const isPausedRef = useRef(isPaused)
+  const isCelebratingRef = useRef(isCelebrating)
   useEffect(() => {
     isPausedRef.current = isPaused
-  }, [isPaused])
+    isCelebratingRef.current = isCelebrating
+  }, [isPaused, isCelebrating])
 
   const stateRef = useRef({
     x: 50,
@@ -38,14 +41,20 @@ export function usePetWalk(isPaused: boolean = false) {
       if (s.state === 'idle') {
         s.timer -= dt
         if (s.timer <= 0) {
-          if (Math.random() < 0.4) {
+          if (isCelebratingRef.current || Math.random() < 0.4) {
             // Walk!
             s.state = 'walking'
             s.targetX = 10 + Math.random() * 75
-            s.targetY = Math.random() * 100
+            
+            if (isCelebratingRef.current) {
+              // Full screen jumps
+              s.targetY = Math.random() * 90
+            } else {
+              s.targetY = Math.random() * 100
+            }
             
             // Bin avoidance
-            if (s.targetX < 22 && s.targetY < 20) {
+            if (!isCelebratingRef.current && s.targetX < 22 && s.targetY < 20) {
                s.targetX = 25 + Math.random() * 10
             }
             
@@ -64,14 +73,23 @@ export function usePetWalk(isPaused: boolean = false) {
         const dist = Math.sqrt(dx * dx + dy * dy)
         
         // Speed: 50% distance in 6000ms = ~0.00833 %/ms
-        const step = 0.00833 * dt
+        const baseSpeed = 0.00833
+        const step = (isCelebratingRef.current ? baseSpeed * 8 : baseSpeed) * dt
 
         if (dist <= step) {
           s.x = s.targetX
           s.y = s.targetY
-          s.state = 'idle'
-          s.timer = 1000 + Math.random() * 2000
-          setIsWalking(false)
+          
+          if (isCelebratingRef.current) {
+             // In celebration, instantly pick a new point (0 idle time)
+             s.state = 'idle'
+             s.timer = 0
+             setIsWalking(false)
+          } else {
+             s.state = 'idle'
+             s.timer = 1000 + Math.random() * 2000
+             setIsWalking(false)
+          }
         } else {
           s.x += (dx / dist) * step
           s.y += (dy / dist) * step
@@ -79,6 +97,14 @@ export function usePetWalk(isPaused: boolean = false) {
         
         setX(s.x)
         setY(s.y)
+      }
+      
+      // Calculate bounce effect if celebrating
+      if (isCelebratingRef.current && s.state === 'walking') {
+        const bounce = Math.abs(Math.sin(time / 100)) * 20
+        setBounceY(bounce)
+      } else {
+        setBounceY(0)
       }
 
       animationFrameId = requestAnimationFrame(tick)
@@ -88,5 +114,5 @@ export function usePetWalk(isPaused: boolean = false) {
     return () => cancelAnimationFrame(animationFrameId)
   }, [])
 
-  return { x, y, facingLeft, isWalking }
+  return { x, y, facingLeft, isWalking, bounceY }
 }

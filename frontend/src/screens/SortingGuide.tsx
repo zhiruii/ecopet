@@ -7,6 +7,7 @@ import { CheckToggle } from '../components/CheckToggle'
 
 interface SortingGuideProps {
   material: Material
+  recyclable: boolean
   rinseConfirmed: boolean
   binConfirmed: boolean
   onToggleRinse: () => void
@@ -17,6 +18,7 @@ interface SortingGuideProps {
 /** Rinse + which-bin instruction, plus the two one-tap confirmations — a graded metric, not decoration. */
 export function SortingGuide({
   material,
+  recyclable,
   rinseConfirmed,
   binConfirmed,
   onToggleRinse,
@@ -31,24 +33,26 @@ export function SortingGuide({
         <p className="text-sm opacity-70">{rule.note}</p>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <ListItem
-          icon={<IconDroplet size={20} />}
-          title="Rinsed"
-          trailing={<CheckToggle checked={rinseConfirmed} onToggle={onToggleRinse} label="Rinsed" />}
-        />
-        <ListItem
-          icon={<IconRecycle size={20} />}
-          title="Sorted into the right bin"
-          trailing={
-            <CheckToggle
-              checked={binConfirmed}
-              onToggle={onToggleBin}
-              label="Sorted into the right bin"
-            />
-          }
-        />
-      </div>
+      {recyclable && (
+        <div className="flex flex-col gap-2">
+          <ListItem
+            icon={<IconDroplet size={20} />}
+            title="Rinsed"
+            trailing={<CheckToggle checked={rinseConfirmed} onToggle={onToggleRinse} label="Rinsed" />}
+          />
+          <ListItem
+            icon={<IconRecycle size={20} />}
+            title="Sorted into the right bin"
+            trailing={
+              <CheckToggle
+                checked={binConfirmed}
+                onToggle={onToggleBin}
+                label="Sorted into the right bin"
+              />
+            }
+          />
+        </div>
+      )}
 
       {onConfirm && <Button onClick={onConfirm}>Confirm</Button>}
     </div>
