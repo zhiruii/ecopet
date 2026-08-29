@@ -1,0 +1,5 @@
+#!/bin/sh
+# Blocks commits that contain credentials.
+# Enabled by: git config core.hooksPath .githooks   (run once per clone)
+
+exec sh "$(git rev-parse --show-toplevel)/scripts/check-secrets.sh" --staged
