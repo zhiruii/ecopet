@@ -13,7 +13,11 @@ interface AccessoriesProps {
 export const Accessories = ({ species, worn }: AccessoriesProps) => (
   <>
     {ACCESSORY_LAYER_ORDER.filter((id) => worn.includes(id)).map((id) => {
-      const [col, row] = ACCESSORY_PLACEMENT[species][id];
+      // A save from before the roster was cut to 3 can name a species that no
+      // longer exists. Fall back the way Pet.tsx does — an unplaced accessory
+      // must never take the whole app down.
+      const placement = ACCESSORY_PLACEMENT[species] ?? ACCESSORY_PLACEMENT.chargetchi;
+      const [col, row] = placement[id];
       const { grid, palette } = ACCESSORY_SPRITES[id];
       return (
         <g key={id}>

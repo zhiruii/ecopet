@@ -8,6 +8,7 @@ import {
   normalizeInventory,
 } from '../data/shopItems'
 import type { FoodInventory } from '../data/shopItems'
+import { PET_SPECIES_LIST } from '../pet/registry'
 import { persistConfig } from './persist'
 
 const MAX_HAPPINESS = 100
@@ -36,15 +37,25 @@ interface PetState {
 
 const clampHappiness = (value: number) => Math.max(0, Math.min(MAX_HAPPINESS, value))
 
-/** v1 stored the same 0-100 stat as `hunger` and held no food inventory. */
+/**
+ * v1 stored the same 0-100 stat as `hunger` and held no food inventory.
+ * v3 additionally drops a species left over from the 6-pet roster: those
+ * components and accessory placements no longer exist, so keeping the id
+ * would render a pet that cannot be drawn. Null sends the player back to
+ * onboarding to pick again, which is the only honest recovery.
+ */
 function migratePetState(persisted: unknown): PetState {
   const { hunger, ...rest } = (persisted ?? {}) as Record<string, unknown>
   const carried = typeof hunger === 'number' ? hunger : undefined
-  const stored = (rest as Partial<PetState>).happiness
+  const prev = rest as Partial<PetState>
+  const speciesIsKnown =
+    prev.species != null && PET_SPECIES_LIST.includes(prev.species as PetSpeciesId)
+
   return {
     ...rest,
-    happiness: clampHappiness(typeof stored === 'number' ? stored : (carried ?? 80)),
-    inventory: normalizeInventory((rest as Partial<PetState>).inventory),
+    species: speciesIsKnown ? prev.species : null,
+    happiness: clampHappiness(typeof prev.happiness === 'number' ? prev.happiness : (carried ?? 80)),
+    inventory: normalizeInventory(prev.inventory),
   } as PetState
 }
 
