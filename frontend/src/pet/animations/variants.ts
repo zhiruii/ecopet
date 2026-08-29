@@ -9,6 +9,14 @@ export const petVariants: Variants = {
       repeat: Infinity,
     },
   },
+  walking: {
+    y: [0, -5, 0],
+    transition: {
+      duration: 0.6,
+      ease: "easeInOut",
+      repeat: Infinity,
+    },
+  },
   wobble: {
     scaleY: [1, 0.88, 1.06, 1],
     rotate: [0, -4, 4, 0],

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
 import type { FoodId } from 'shared/types'
 import { IconRecycle, IconCoins, IconScan, IconClose } from '../components/icons'
 import type { Screen } from '../App'
@@ -9,6 +9,7 @@ import { FOOD_BY_ID } from '../data/shopItems'
 import { FOOD_ICONS } from '../data/shopIcons'
 import { Pet } from '../pet/Pet'
 import { usePetReaction } from '../pet/animations/usePetReaction'
+import { usePetWalk } from '../pet/animations/usePetWalk'
 import { Button } from '../components/Button'
 import { ProgressBar } from '../components/ProgressBar'
 import { ListItem } from '../components/ListItem'
@@ -44,6 +45,17 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
   const foodIconRef = useRef<HTMLSpanElement>(null)
   const [flight, setFlight] = useState<Flight | null>(null)
   const [bite, setBite] = useState(0)
+  
+  const { x: walkX, y: walkY, facingLeft, isWalking } = usePetWalk(flight !== null)
+  const [showHeart, setShowHeart] = useState(false)
+  
+  const petScale = 0.72 - (walkY / 100) * 0.32
+
+  const handlePetTap = () => {
+    triggerReaction('wobble')
+    setShowHeart(true)
+    setTimeout(() => setShowHeart(false), 900)
+  }
 
   const held = armedFood ? inventory[armedFood] : 0
   const food = armedFood ? FOOD_BY_ID[armedFood] : null
@@ -190,26 +202,45 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
       </div>
 
       {/* ═══ Pet Area — grounded on the hill ═══ */}
-      <div
-        className="absolute left-0 right-0 z-[20] flex flex-col items-center pointer-events-none"
-        style={{ bottom: '34%' }}
+      <motion.div
+        className="absolute z-[20] flex flex-col items-center pointer-events-none origin-bottom"
+        initial={false}
+        style={{ 
+          left: `${walkX}%`,
+          bottom: `${25 + (walkY / 100) * 13}%`,
+          scale: petScale,
+          translateX: '-50%' 
+        }}
       >
         <div
           ref={petRef}
-          className="relative flex flex-col items-center justify-center cursor-pointer transform scale-[0.72] hover:scale-[0.75] transition-transform duration-300 pointer-events-auto"
-          onClick={() => triggerReaction('wobble')}
+          className="relative flex flex-col items-center justify-center cursor-pointer transform origin-bottom hover:scale-105 transition-transform duration-300 pointer-events-auto"
+          onClick={handlePetTap}
         >
+          <AnimatePresence>
+            {showHeart && (
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: -40 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.9, ease: 'easeOut' }}
+                className="absolute -top-6 text-4xl text-[#FF4B4B] z-30"
+                style={{ imageRendering: 'pixelated', textShadow: '2px 2px 0px #000' }}
+              >
+                ❤
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-
-          <Pet species={species} mood={displayMood} reaction={reaction} accessories={worn} />
+          <Pet species={species} mood={displayMood} reaction={reaction} accessories={worn} facingLeft={facingLeft} isWalking={isWalking} />
 
           {/* Ground contact shadow */}
           <div className="w-28 h-2 mt-1" style={{ background: 'rgba(58,122,62,0.35)' }} />
         </div>
-        <h2 className="mt-6 text-2xl font-bold text-white drop-shadow-md tracking-wide">
+        <h2 className="absolute top-full mt-2 text-2xl font-bold text-white drop-shadow-md tracking-wide">
           {name || 'Your pet'}
         </h2>
-      </div>
+      </motion.div>
 
       {/* ═══ Bottom Overlay UI ═══ */}
       <div className="relative z-20 w-full flex flex-col gap-3 p-5 pb-24 mt-auto">
@@ -276,6 +307,7 @@ export function Home({ onNavigate, armedFood, onFeedDone }: HomeProps) {
             y:
               (flight.to.y - flight.from.y) * progress -
               (reduced ? 0 : Math.sin(progress * Math.PI) * 24),
+            scale: 1 - progress * (1 - petScale)
           }}
           transition={reduced ? { duration: 0 } : { duration: 0.34, ease: [0.22, 0.61, 0.36, 1] }}
         >

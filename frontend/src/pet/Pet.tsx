@@ -15,13 +15,17 @@ interface PetProps {
   reaction: Reaction;
   /** Worn accessories, drawn over the body and face. */
   accessories?: AccessoryId[];
+  /** If true, flips the sprite to face left. */
+  facingLeft?: boolean;
+  /** If true, the pet is currently walking. */
+  isWalking?: boolean;
   /** Overrides the default 12rem stage. */
   className?: string;
 }
 
-export function Pet({ species, mood, reaction, accessories = [], className }: PetProps) {
+export function Pet({ species, mood, reaction, accessories = [], facingLeft = false, isWalking = false, className }: PetProps) {
   const Component = PET_COMPONENTS[species] || PET_COMPONENTS['chargetchi']; // Fallback
-  const activeVariant = reaction !== 'idle' ? reaction : 'idle';
+  const activeVariant = reaction !== 'idle' ? reaction : isWalking ? 'walking' : 'idle';
 
   return (
     <div className={clsx('relative mx-auto flex items-center justify-center', className ?? 'w-48 h-48')}>
@@ -30,6 +34,7 @@ export function Pet({ species, mood, reaction, accessories = [], className }: Pe
         animate={activeVariant}
         className="w-full h-full cursor-pointer"
         whileTap="tapSquash"
+        style={{ scaleX: facingLeft ? -1 : 1 }}
       >
         <Component>
           <Eyes mood={mood} />
