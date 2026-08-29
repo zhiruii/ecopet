@@ -11,6 +11,11 @@ const RINSE_BONUS = 5
 const BIN_BONUS = 5
 const CREDITS_PER_KG_CO2 = 20
 
+/** Happiness the pet gains from any recyclable item sorted, on top of credits.
+ * Small on purpose — food is the main lever, this just ties the bar to the
+ * behaviour we actually want. */
+export const HAPPINESS_PER_SCAN = 2
+
 export interface AwardParams {
   recyclable: boolean
   rinseConfirmed: boolean

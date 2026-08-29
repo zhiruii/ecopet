@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import type { FoodId } from 'shared/types'
 import { usePetStore } from './store/usePetStore'
 import { Onboarding } from './screens/Onboarding'
 import { Home } from './screens/Home'
@@ -21,15 +22,26 @@ function initialScreen(hasOnboarded: boolean): Screen {
 export default function App() {
   const species = usePetStore((s) => s.species)
   const [screen, setScreen] = useState<Screen>(() => initialScreen(species !== null))
+  // Which food the player picked in the Shop to go feed the pet with. Navigation
+  // intent rather than saved state, so it lives here and not in the store.
+  const [armedFood, setArmedFood] = useState<FoodId | null>(null)
 
   const showTabBar = (TAB_SCREENS as string[]).includes(screen)
+
+  const armFood = useCallback((id: FoodId) => {
+    setArmedFood(id)
+    setScreen('home')
+  }, [])
+  const disarmFood = useCallback(() => setArmedFood(null), [])
 
   return (
     <>
       {screen === 'onboarding' && <Onboarding onDone={() => setScreen('home')} />}
-      {screen === 'home' && <Home onNavigate={setScreen} />}
+      {screen === 'home' && (
+        <Home onNavigate={setScreen} armedFood={armedFood} onFeedDone={disarmFood} />
+      )}
       {screen === 'scan' && <ScanFlow onDone={() => setScreen('home')} />}
-      {screen === 'shop' && <Shop />}
+      {screen === 'shop' && <Shop onFeed={armFood} />}
       {screen === 'stats' && <Stats onBack={() => setScreen('home')} />}
       {showTabBar && <TabBar active={screen} onNavigate={setScreen} />}
     </>

@@ -1,42 +1,80 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AccessoryId, PetMood, PetSpeciesId } from 'shared/types'
-import { ACCESSORY_SLOT } from '../data/shopItems'
+import type { AccessoryId, FoodId, PetMood, PetSpeciesId } from 'shared/types'
+import {
+  ACCESSORY_SLOT,
+  FOOD_BY_ID,
+  emptyInventory,
+  normalizeInventory,
+} from '../data/shopItems'
+import type { FoodInventory } from '../data/shopItems'
 import { persistConfig } from './persist'
+
+const MAX_HAPPINESS = 100
 
 interface PetState {
   species: PetSpeciesId | null
   name: string
   mood: PetMood
-  hunger: number // 0-100
+  /** 0-100. Raised by food and by recycling; never falls. */
+  happiness: number
+  /** Foods bought but not yet eaten. */
+  inventory: FoodInventory
   owned: AccessoryId[]
   worn: AccessoryId[]
   setSpecies: (species: PetSpeciesId) => void
   setName: (name: string) => void
   setMood: (mood: PetMood) => void
-  feed: (restores: number) => void
+  addHappiness: (amount: number) => void
+  buyFood: (id: FoodId) => void
+  /** Eats one held unit and applies its happiness. Returns false if none held. */
+  consumeFood: (id: FoodId) => boolean
   own: (id: AccessoryId) => void
   wear: (id: AccessoryId) => void
   unwear: (id: AccessoryId) => void
 }
 
+const clampHappiness = (value: number) => Math.max(0, Math.min(MAX_HAPPINESS, value))
+
+/** v1 stored the same 0-100 stat as `hunger` and held no food inventory. */
+function migratePetState(persisted: unknown): PetState {
+  const { hunger, ...rest } = (persisted ?? {}) as Record<string, unknown>
+  const carried = typeof hunger === 'number' ? hunger : undefined
+  const stored = (rest as Partial<PetState>).happiness
+  return {
+    ...rest,
+    happiness: clampHappiness(typeof stored === 'number' ? stored : (carried ?? 80)),
+    inventory: normalizeInventory((rest as Partial<PetState>).inventory),
+  } as PetState
+}
+
 export const usePetStore = create<PetState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       species: null,
       name: '',
       mood: 'idle',
-      hunger: 80,
+      happiness: 80,
+      inventory: emptyInventory(),
       owned: [],
       worn: [],
       setSpecies: (species) => set({ species }),
       setName: (name) => set({ name: name.slice(0, 12) }),
       setMood: (mood) => set({ mood }),
-      feed: (restores) =>
-        set((state) => ({
-          hunger: Math.min(100, state.hunger + restores),
-          mood: 'eating',
-        })),
+      addHappiness: (amount) =>
+        set((state) => ({ happiness: clampHappiness(state.happiness + amount) })),
+      buyFood: (id) =>
+        set((state) => ({ inventory: { ...state.inventory, [id]: state.inventory[id] + 1 } })),
+      consumeFood: (id) => {
+        const state = get()
+        if (state.inventory[id] <= 0) return false
+        set({
+          inventory: { ...state.inventory, [id]: state.inventory[id] - 1 },
+          happiness: clampHappiness(state.happiness + FOOD_BY_ID[id].happiness),
+          mood: 'happy',
+        })
+        return true
+      },
       own: (id) =>
         set((state) => (state.owned.includes(id) ? state : { owned: [...state.owned, id] })),
       // One item per slot: wearing a second head piece takes the first one off.
@@ -48,6 +86,6 @@ export const usePetStore = create<PetState>()(
         }),
       unwear: (id) => set((state) => ({ worn: state.worn.filter((w) => w !== id) })),
     }),
-    persistConfig('pet'),
+    persistConfig<PetState>('pet', migratePetState),
   ),
 )

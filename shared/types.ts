@@ -30,3 +30,4 @@ export type PetMood = 'idle' | 'happy' | 'eating' | 'sleepy' | 'sad'
 
 export type PetSpeciesId = 'chargetchi' | 'hugtchi' | 'punchtchi'
 export type AccessoryId = 'hat' | 'scarf' | 'glasses' | 'leafCrown'
+export type FoodId = 'snack' | 'meal' | 'feast'

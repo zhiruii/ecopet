@@ -1,20 +1,27 @@
 import { clsx } from 'clsx'
 import type { ReactNode } from 'react'
-import { IconCoins, IconCheck } from '../components/icons'
+import type { FoodId } from 'shared/types'
+import { IconCoins } from '../components/icons'
 import { FOODS, ACCESSORIES, SLOT_LABEL } from '../data/shopItems'
-import type { AccessoryItem } from '../data/shopItems'
+import type { AccessoryItem, FoodItem } from '../data/shopItems'
 import { FOOD_ICONS, ACCESSORY_ICONS } from '../data/shopIcons'
 import { Pet } from '../pet/Pet'
 import { usePetReaction } from '../pet/animations/usePetReaction'
 import { useProgressStore } from '../store/useProgressStore'
 import { usePetStore } from '../store/usePetStore'
 
-export function Shop() {
+interface ShopProps {
+  /** Arms a held food and sends the player home to feed it to the pet. */
+  onFeed: (id: FoodId) => void
+}
+
+export function Shop({ onFeed }: ShopProps) {
   const credits = useProgressStore((s) => s.credits)
   const spend = useProgressStore((s) => s.spend)
   const species = usePetStore((s) => s.species)
   const mood = usePetStore((s) => s.mood)
-  const feed = usePetStore((s) => s.feed)
+  const buyFood = usePetStore((s) => s.buyFood)
+  const inventory = usePetStore((s) => s.inventory)
   const own = usePetStore((s) => s.own)
   const wear = usePetStore((s) => s.wear)
   const unwear = usePetStore((s) => s.unwear)
@@ -32,17 +39,22 @@ export function Shop() {
       </header>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase tracking-wide">Consumables</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-lg font-black uppercase tracking-wide">Consumables</h2>
+          <p className="text-xs font-bold leading-snug text-[var(--text-muted)]">
+            Buy food to stock up. Feed takes you home so you can hand it over yourself.
+          </p>
+        </div>
+        <div className="flex flex-col gap-2.5">
           {FOODS.map((food) => (
-            <ShopTile
+            <FoodRow
               key={food.id}
+              food={food}
               icon={FOOD_ICONS[food.id]?.({ className: 'w-full h-full' })}
-              label={food.name}
-              price={food.price}
-              disabled={credits < food.price}
-              iconBoxClassName="h-16 w-16"
-              onBuy={() => spend(food.price) && feed(food.restores)}
+              credits={credits}
+              held={inventory[food.id]}
+              onBuy={() => spend(food.price) && buyFood(food.id)}
+              onFeed={() => onFeed(food.id)}
             />
           ))}
         </div>
@@ -117,54 +129,75 @@ export function Shop() {
   )
 }
 
-interface ShopTileProps {
+/** Shared chunky action button used by both catalogue rows. */
+const TILE_BUTTON =
+  'pixel-notch-sm w-full whitespace-nowrap border-[2px] border-ink px-2 py-1.5 text-[11px] font-black uppercase tracking-wide transition-all duration-150 focus-visible:outline focus-visible:outline-[2px] focus-visible:[outline-offset:-6px] focus-visible:outline-ink'
+const TILE_BUTTON_LIVE =
+  'shadow-[2px_2px_0_var(--ink)] hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--ink)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none'
+const TILE_BUTTON_DEAD = 'cursor-not-allowed bg-paper text-[var(--text-muted)]'
+
+interface FoodRowProps {
+  food: FoodItem
   icon: ReactNode
-  label: string
-  price: number
-  disabled?: boolean
-  owned?: boolean
-  iconBoxClassName?: string
+  credits: number
+  held: number
   onBuy: () => void
+  onFeed: () => void
 }
 
-function ShopTile({ icon, label, price, disabled, owned, iconBoxClassName, onBuy }: ShopTileProps) {
-  const locked = disabled || owned
+function FoodRow({ food, icon, credits, held, onBuy, onFeed }: FoodRowProps) {
+  const shortfall = food.price - credits
+  const affordable = shortfall <= 0
+  const hasStock = held > 0
+
   return (
-    <button
-      type="button"
-      disabled={locked}
-      onClick={onBuy}
-      className={clsx(
-        'pixel-notch flex flex-col items-center gap-1.5 border-[3px] border-ink bg-card p-2 pt-3 shadow-[3px_3px_0_var(--ink)] transition-all duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:[outline-offset:-7px] focus-visible:outline-accent',
-        !locked &&
-          'hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--ink)] active:translate-y-0 active:shadow-[1px_1px_0_var(--ink)]',
-        locked && 'opacity-50',
-      )}
-    >
-      <span
-        className={clsx(
-          'flex items-center justify-center border-[2px] border-ink bg-paper p-1.5',
-          iconBoxClassName,
-        )}
-      >
+    <div className="pixel-notch flex items-center gap-3 border-[3px] border-ink bg-card p-3 shadow-[3px_3px_0_var(--ink)]">
+      <span className="relative flex h-16 w-16 shrink-0 items-center justify-center border-[2px] border-ink bg-paper p-1.5">
         {icon}
-      </span>
-      <span className="text-center text-[11px] font-bold uppercase leading-tight">{label}</span>
-      <span
-        className={clsx(
-          'mt-auto flex items-center gap-1 rounded-full border-[2px] border-ink px-2 py-0.5 text-xs font-bold',
-          owned ? 'bg-good text-ink' : 'bg-credit text-ink',
-        )}
-      >
-        {owned ? (
-          <>
-            <IconCheck size={10} /> Owned
-          </>
-        ) : (
-          `${price}c`
+        {hasStock && (
+          <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center border-[2px] border-ink bg-credit px-1 text-[11px] font-black tabular-nums text-ink">
+            {held}
+          </span>
         )}
       </span>
-    </button>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="text-[13px] font-bold uppercase leading-tight">{food.name}</span>
+        <span className="text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">
+          +{food.happiness} happiness
+        </span>
+        {!affordable && (
+          <span className="text-[10px] font-bold uppercase tracking-wide text-warn">
+            {shortfall} more credits
+          </span>
+        )}
+      </div>
+
+      <div className="flex w-[124px] shrink-0 flex-col gap-1.5">
+        <button
+          type="button"
+          disabled={!affordable}
+          onClick={onBuy}
+          className={clsx(
+            TILE_BUTTON,
+            affordable ? clsx(TILE_BUTTON_LIVE, 'bg-accent text-white') : TILE_BUTTON_DEAD,
+          )}
+        >
+          Buy {food.price}c
+        </button>
+        <button
+          type="button"
+          disabled={!hasStock}
+          onClick={onFeed}
+          className={clsx(
+            TILE_BUTTON,
+            hasStock ? clsx(TILE_BUTTON_LIVE, 'bg-good text-ink') : TILE_BUTTON_DEAD,
+          )}
+        >
+          Feed (Qty: {held})
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -236,11 +269,10 @@ function AccessoryTile({
         aria-pressed={owned ? worn : undefined}
         onClick={action.onClick}
         className={clsx(
-          'pixel-notch-sm w-full whitespace-nowrap border-[2px] border-ink px-2 py-1.5 text-[11px] font-black uppercase tracking-wide transition-all duration-150 focus-visible:outline focus-visible:outline-[2px] focus-visible:[outline-offset:-6px] focus-visible:outline-ink',
+          TILE_BUTTON,
           action.disabled
-            ? 'cursor-not-allowed bg-paper text-[var(--text-muted)]'
-            : 'shadow-[2px_2px_0_var(--ink)] hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--ink)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none',
-          !action.disabled && (worn ? 'bg-card text-ink' : 'bg-accent text-white'),
+            ? TILE_BUTTON_DEAD
+            : clsx(TILE_BUTTON_LIVE, worn ? 'bg-card text-ink' : 'bg-accent text-white'),
         )}
       >
         {action.label}
