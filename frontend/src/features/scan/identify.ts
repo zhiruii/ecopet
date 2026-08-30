@@ -19,15 +19,20 @@ function blobToBase64(blob: Blob): Promise<string> {
   });
 }
 
+// Backend origin. Empty in dev so the request stays relative and the Vite proxy
+// (vite.config.ts) forwards it to the local server; in production this is the
+// Render service URL, since frontend and backend are on different hosts.
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+
 /**
- * Real API call to the Vercel backend.
+ * Real API call to the identify backend.
  * Falls back to mockIdentify in dev or if the backend is unreachable.
  */
 export async function identify(imageBlob: Blob): Promise<IdentifyResult[]> {
   try {
     const imageBase64 = await blobToBase64(imageBlob);
 
-    const response = await fetch('/api/identify', {
+    const response = await fetch(`${API_BASE}/api/identify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
